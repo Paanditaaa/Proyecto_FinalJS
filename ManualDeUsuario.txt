@@ -1,0 +1,21 @@
+*Tener lista la base de datos en phpmyadmin*
+
+/*Menu principal*/
+
+Elige una opción de las 4 que hay (Registrar, Eliminar, Consultar, Modificar)
+
+/*Registrar*/
+
+Rellenar los datos solicitados para registrar un usuario
+
+/*Eliminar*/
+
+Introducir el ID para eliminar el usuario
+
+/*Consultar*/
+
+Introducir el nombre para buscar el usuario
+
+/*Modificar*/
+
+Rellenar datos exactamente como en la base de datos, antes de dar actualizar, modificar lo deseado
