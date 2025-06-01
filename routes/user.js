@@ -35,7 +35,7 @@ user.post("/login", async (req, res, next) => {
                 user_id: rows[0].user_id,
                 user_mail: rows[0].user_mail
             }, "debugkey")
-            return res.status(200).status({code: 200, message: token});
+            return res.status(200).json({code: 200, message: token});
         }
         else{
             return res.status(401).json({code: 401, message: "Usuario y/o contraseña incorrecto"});
@@ -64,8 +64,8 @@ user.get("/", async (req, res, next) => {
     const rows = await db.query(query);
     return res.status(200).json({code:200, message: rows})
 })
-user.get('/:Nombre([A-Za-z]+)', async (req, res, next) => {
-    const nombre = req.params.nombre;
+user.get('/:name([A-Za-z]+)', async (req, res, next) => {
+    const nombre = req.params.name;
     const usuario = await db.query("SELECT * FROM datos_empleados WHERE Nombre = '"+nombre+"'");
     if (usuario.length > 0) {
         return res.status(200).json({code: 1, message: usuario});
@@ -73,7 +73,7 @@ user.get('/:Nombre([A-Za-z]+)', async (req, res, next) => {
     res.status(404).json({code:404, message: "Usuario no encontrado"})
 })
 //DELETE
-user.delete("/:ID([0-9]{1,3})", async (req, res, next) => {
+user.delete("/:id([0-9]{1,3})", async (req, res, next) => {
     const query = `DELETE FROM datos_empleados WHERE ID = '${req.params.id}'`
     const rows = await db.query(query);
 
@@ -83,7 +83,7 @@ user.delete("/:ID([0-9]{1,3})", async (req, res, next) => {
     return res.status(404).json({code:404, message: "Usuario no encontrado"});
 })
 //Put
-user.put("/:ID([0-9]{1,3})", async (req, res, next) => {
+user.put("/:id([0-9]{1,3})", async (req, res, next) => {
     
     res.status(200).send(db.query);
     const {user_name, user_apellido, user_phone, user_mail, user_adress, user_password} = req.body;

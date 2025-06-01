@@ -2,15 +2,6 @@
 window.onload = init;
 
 function init() {
-    if(!localStorage.getItem("token")){
-    document.querySelector('.btn-secondary').addEventListener('click', function(){
-        window.location.href = "signin.html"
-    });
-    }
-    else {
-        window.location.href = "datos.html"
-    }
-
     document.querySelector('.btn-primary').addEventListener('click', login);
 
 }

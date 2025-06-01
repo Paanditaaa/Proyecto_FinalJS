@@ -11,32 +11,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>   
-    <script src ="./js/login.js"></script>
+    <script src = "./js/baja.js"></script>
 </head>
 
 <body>
     <div class="container">
         <div class="row mt-5">
             <div class="col-6 offset-3">
-                <h1>Inicia sesión</h1>
+                <h1>Dar de baja</h1>
             </div>
         </div>
         <div class="row align-items-center">
             <div class="col-6 offset-3">
+                
                 <div class="form-group">
-                    <label for="input-mail">Correo electrónico</label>
-                    <input type="email" class="form-control" id="input-mail" placeholder="correo@dominio.ext">
-                    <small class="form-text text-muted">El correo con el que te registraste.</small>
-                </div>
-                <div class="form-group">
-                    <label for="input-password">Contraseña</label>
-                    <input type="password" class="form-control" id="input-password" placeholder="***********">
-                </div>
+                    <label for="input-mail">ID</label>
+                    <input type="text" class="form-control" id="input-id" placeholder="Mauricio Arturo">
+                    <small class="form-text text-muted">Escribe el id.</small>
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-primary">Entrar</button>
+                    <button class="btn btn-primary">Borrar usuario</button>
+                    <button class="btn btn-secondary">Volver a inicio</button>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>
