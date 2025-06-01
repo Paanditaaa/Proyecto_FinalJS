@@ -1,62 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Base de datos</title>
+    <title>Registro</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>   
-   <script src = "./js/signin.js"></script>
+    <script src="./js/signin.js"></script>
 </head>
 
 <body>
     <div class="container">
         <div class="row mt-5">
             <div class="col-6 offset-3">
-                <h1>Registro</h1>
-            </div>
-        </div>
-        <div class="row align-items-center">
-            <div class="col-6 offset-3">
-                
-                <div class="form-group">
-                    <label for="input-mail">Nombre</label>
-                    <input type="text" class="form-control" id="input-name" placeholder="Mauricio Arturo">
-                    <small class="form-text text-muted">Tu nombre.</small>
-                </div>
-                <div class="form-group">
-                    <label for="input-mail">Apellido</label>
-                    <input type="text" class="form-control" id="input-surname" placeholder="Corona Ibarra">
-                    <small class="form-text text-muted">Tus apellidos.</small>
-                </div>
-              <div class="form-group">
-                    <label for="input-mail">Phone</label>
-                    <input type="text" class="form-control" id="input-phone" placeholder="(55)1234-5678">
-                    <small class="form-text text-muted">Tu numero telefonico.</small>
-                </div>
-                <div class="form-group">
-                    <label for="input-password">address</label>
-                    <input type="text" class="form-control" id="input-address" placeholder="Calle, Colonia, Ciudad, Estado, Pais">
-                    <small class="form-text text-muted">Tu dirección.</small>
-                </div>
-                <div class="form-group">
-                    <label for="input-mail">Correo electrónico</label>
-                    <input type="email" class="form-control" id="input-mail" placeholder="correo@dominio.ext">
-                    <small class="form-text text-muted">Un correo para registrarte.</small>
-                </div>
-                <div class="form-group">
-                    <label for="input-password">Contraseña</label>
-                    <input type="password" class="form-control" id="input-password" placeholder="***********">
-                </div>
-                <div class="d-flex justify-content-between">
-                    <button class="btn btn-primary">Registrar usuario</button>
-                    <button class="btn btn-secondary">Volver a inicio</button>
-                </div>
+                <h1 class="mb-4 text-center">Registro</h1>
+                <form>
+                    <div class="form-group">
+                        <label for="input-name">Nombre</label>
+                        <input type="text" class="form-control" id="input-name" placeholder="Nombre">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-surname">Apellidos</label>
+                        <input type="text" class="form-control" id="input-surname" placeholder="Apellidos">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-phone">Teléfono</label>
+                        <input type="text" class="form-control" id="input-phone" placeholder="Teléfono">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-address">Dirección</label>
+                        <input type="text" class="form-control" id="input-address" placeholder="Dirección">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-mail">Correo electrónico</label>
+                        <input type="email" class="form-control" id="input-mail" placeholder="correo@dominio.ext">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-password">Contraseña</label>
+                        <input type="password" class="form-control" id="input-password" placeholder="***********">
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-primary">Registrar usuario</button>
+                        <button type="button" class="btn btn-secondary">Volver a inicio</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

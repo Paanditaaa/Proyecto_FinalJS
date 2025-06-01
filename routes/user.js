@@ -8,7 +8,7 @@ const user = datos_empleados;
 const db = require('../config/database');
 
 //Post
-user.post("/signin", async (req, res, next) => {
+user.post("/alta", async (req, res, next) => {
     const { user_id, user_name, user_surname, user_phone, user_mail, user_address, user_password} = req.body;
     
     if (user_name && user_surname && user_phone && user_mail && user_address && user_password) {
@@ -44,11 +44,11 @@ user.post("/login", async (req, res, next) => {
     return res.status(500).json({code: 500, message: "Campos incompletos"});
 })
 user.post("/", async (req, res, next) => {
-    const {user_name, user_apellido, user_phone, user_mail, user_adress, user_password} = req.body;
+    const {user_name, user_surname, user_phone, user_mail, user_address, user_password} = req.body;
 
-    if(user_name && user_apellido && user_phone && user_mail && user_adress && user_password){
+    if(user_name && user_surname && user_phone && user_mail && user_address && user_password){
         let query = "INSERT INTO datos_empleados (Nombre, Apellidos, Telefono, CorreoE, Direccion, Contraseña)";
-        query += `VALUES ('${user_name}','${user_apellido}','${user_phone}','${user_mail}','${user_adress}', '${user_password}')`;
+        query += `VALUES ('${user_name}','${user_surname}','${user_phone}','${user_mail}','${user_address}', '${user_password}')`;
         const rows = await db.query(query);
 
         if (rows.affectedRows == 1){
@@ -64,13 +64,16 @@ user.get("/", async (req, res, next) => {
     const rows = await db.query(query);
     return res.status(200).json({code:200, message: rows})
 })
-user.get('/:name([A-Za-z]+)', async (req, res, next) => {
+user.get('/:name', async (req, res, next) => {
     const nombre = req.params.name;
-    const usuario = await db.query("SELECT * FROM datos_empleados WHERE Nombre = '"+nombre+"'");
+    const usuario = await db.query(
+        "SELECT * FROM datos_empleados WHERE LOWER(Nombre) LIKE LOWER(?)",
+        [`%${nombre}%`]
+    );
     if (usuario.length > 0) {
-        return res.status(200).json({code: 1, message: usuario});
+        return res.status(200).json({code: 200, message: usuario});
     }
-    res.status(404).json({code:404, message: "Usuario no encontrado"})
+    res.status(404).json({code:404, message: "Usuario no encontrado"});
 })
 //DELETE
 user.delete("/:id([0-9]{1,3})", async (req, res, next) => {
@@ -84,20 +87,18 @@ user.delete("/:id([0-9]{1,3})", async (req, res, next) => {
 })
 //Put
 user.put("/:id([0-9]{1,3})", async (req, res, next) => {
-    
-    res.status(200).send(db.query);
-    const {user_name, user_apellido, user_phone, user_mail, user_adress, user_password} = req.body;
+    const { user_name, user_surname, user_phone, user_mail, user_address, user_password } = req.body;
+    const id = req.params.id;
 
-    if(user_name && user_apellido && user_phone && user_mail && user_adress && user_password){
-        let query = `UPDATE datos_empleados SET Nombre ='${user_name}', Apellidos = '${user_apellido}', Telefono = '${user_phone}'`;
-        query += `CorreoE = '${user_mail}', Direccion = '${user_adress}', Contraseña = '${user_password}'`;
-    const rows = await db.query(query);
+    if (user_name && user_surname && user_phone && user_mail && user_address && user_password) {
+        let query = `UPDATE datos_empleados SET Nombre = ?, Apellidos = ?, Telefono = ?, CorreoE = ?, Direccion = ?, Contraseña = ? WHERE ID = ?`;
+        const rows = await db.query(query, [user_name, user_surname, user_phone, user_mail, user_address, user_password, id]);
 
-    if (rows.affectedRows == 1){
-        return res.status(200).json({code: 201, message: "Usuario actualizado correctamente"});
+        if (rows.affectedRows == 1) {
+            return res.status(200).json({ code: 200, message: "Usuario actualizado correctamente" });
+        }
+        return res.status(404).json({ code: 404, message: "Usuario no encontrado" });
     }
-    return res.status(500).json({code: 500, message: "Ocurrio un error"})
-    }
-return res.status(500).json({code: 500, message: "Campos incompletos"})
-})
+    return res.status(400).json({ code: 400, message: "Campos incompletos" });
+});
 module.exports = user;

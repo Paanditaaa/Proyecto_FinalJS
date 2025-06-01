@@ -1,16 +1,16 @@
 window.onload = init;
 
 function init() {
-    document.querySelector('.btn-primary').addEventListener('click', function() {
+    document.querySelector('.btn-success').addEventListener('click', function() {
         window.location.href = "signin.html";
 });
-    document.querySelector('.btn-secondary').addEventListener('click', function() {
+    document.querySelector('.btn-danger').addEventListener('click', function() {
         window.location.href = "baja.html";
 });
-document.querySelector('.btn-success').addEventListener('click', function() {
+document.querySelector('.btn-primary').addEventListener('click', function() {
         window.location.href = "modificar.html";
 });
-    document.querySelector('.btn-info').addEventListener('click', function() {
+    document.querySelector('.btn-warning').addEventListener('click', function() {
         window.location.href = "consultar.html";
 });
 }

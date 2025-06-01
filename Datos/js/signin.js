@@ -27,7 +27,7 @@ async function signin() {
             return;
         }
 
-        const res = await axios({
+        axios({
             method: 'post',
             url: 'http://localhost:3000/user/alta',
             data: {
@@ -44,6 +44,6 @@ async function signin() {
         alert("Usuario registrado correctamente.");
     } catch (err) {
         alert("Ocurrió un error al registrar el usuario.");
-        console.error(err);
+        
     }
 }

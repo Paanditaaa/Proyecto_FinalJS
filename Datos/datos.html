@@ -3,19 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Base de datos</title>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>  
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src = "./js/datos.js"></script>
     <script src = "./js/datos1.js"> </script>
 </head>
 <body>
-    <h1>Bienvenido a la base de datos</h1>
-    <div>
-        <button class="btn btn-primary">Dar de Alta</button>
-        <button class="btn btn-secondary">Dar de Baja</button>
-        <button class="btn btn-success">Modificar</button>
-        <button class="btn btn-info">Consultar</button>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-6 offset-3">
+                <h1>Bienvenido a la Base de datos</h1>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-6 offset-3">
+
+                <div class="form-group">
+                    <label for="input-mail">¿Que deseas hacer?</label>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-success">Dar de Alta</button>
+                    <button class="btn btn-danger">Dar de Baja</button>
+                    <button class="btn btn-primary">Modificar</button>
+                    <button class="btn btn-warning">Consultar</button>
+                </div>
+            </div>
+        </div>
     </div>
-    
-</body>
 </html>
