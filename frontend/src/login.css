@@ -1,0 +1,133 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.login-container {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("https://images.unsplash.com/photo-1550547660-d9450f859349");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.title {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #b28af7;
+  font-size: 60px;
+  font-weight: 700;
+}
+
+.card {
+  width: 360px;
+  background: #faf6f6;
+  padding: 30px;
+  border-radius: 20px;
+  position: absolute;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-20%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.user-icon {
+  width: 120px;
+  height: 120px;
+  background: #3d2b7a;
+  border-radius: 50%;
+  position: absolute;
+  top: -60px;
+  left: calc(50% - 60px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+  margin-top: 25px;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.input-group span {
+  font-size: 20px;
+  color: #3d2b7a;
+}
+
+.input-group input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 16px;
+  color: #333;
+}
+
+.btn {
+  margin-top: 30px;
+  width: 100%;
+  padding: 12px;
+  background: #3d2b7a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn:hover {
+  background: #533db2;
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: flex;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
+}
+
+.profile-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  margin-top: -0px;
+  background: #ddd;
+}
+
+.profile-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}

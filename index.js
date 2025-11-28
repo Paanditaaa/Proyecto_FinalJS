@@ -2,30 +2,37 @@
 const morgan = require('morgan');
 const express = require('express');
 const app = express();
+const db = require('./config/database.js');
 
 /Routers/
 const user = require('./routes/user');
 
 /MiddleWare/
-const auth = require('./middleware/auth');
+const authMiddleware = require('./middleware/auth');
 const notFound = require('./middleware/notFound');
 const index = require('./middleware/index');
-const cors =require('./middleware/cors');
+const corsMiddleware = require("./middleware/cors");
 
-app.use(cors);
+
+app.use(corsMiddleware);
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", index);
+app.post('/api/login', loginController);
+app.get('/api/data', authMiddleware, dataController);
+app.get("/usuarios", async (req, res) => {
+    const usuarios = await db.query("SELECT * FROM datos_empleados");
+    res.json(usuarios);
+});
 
-app.use("/user", user);
 
 app.use(auth);
 
 
 app.use(notFound)
 
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.PORT || 3001, () => {
     console.log("Server is running...");
 });
