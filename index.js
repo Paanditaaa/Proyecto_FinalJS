@@ -20,15 +20,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", index);
-app.post('/api/login', loginController);
-app.get('/api/data', authMiddleware, dataController);
+app.use("/api", user);
 app.get("/usuarios", async (req, res) => {
     const usuarios = await db.query("SELECT * FROM datos_empleados");
     res.json(usuarios);
 });
 
 
-app.use(auth);
+app.use(authMiddleware);
 
 
 app.use(notFound)

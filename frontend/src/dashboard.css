@@ -1,0 +1,521 @@
+/* --- Variables de Color --- */
+:root {
+    --bg-dark: #1e153e;
+    --bg-card: #2f254f;
+    --accent-blue: #4f46e5;
+    --accent-purple: #9333ea;
+    --text-light: #ffffff;
+    --text-muted: #a0a0a0;
+    /* 🚨 AJUSTE: Aumentamos el tamaño base del reloj */
+    --clock-size: 400px;
+    --clock-color: #3c3066;
+}
+
+/* ============================================== */
+/* === AJUSTES GLOBALES Y ESCALA DE DISEÑO === */
+/* ============================================== */
+
+/* Asegura que el contenedor raíz ocupe todo el espacio y elimina el scroll */
+html,
+body,
+#root,
+.App {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    display: block;
+    /* AJUSTE CLAVE: Base grande para Full HD */
+    font-size: 22px;
+    /* Elimina la barra de desplazamiento global */
+    overflow: hidden;
+}
+
+/* --- Layout Principal --- */
+.dashboardContainer {
+    display: flex;
+    background-color: var(--bg-dark);
+    /* Ocupa el 100% de la altura de la ventana */
+    height: 100vh;
+    padding: 20px;
+    gap: 30px;
+    /* Más espacio entre elementos */
+    color: var(--text-light);
+    overflow: hidden;
+    /* CRUCIAL: Mantiene el contenido dentro */
+    box-sizing: border-box;
+}
+
+/* -------------------- SIDEBAR -------------------- */
+.sidebar {
+    width: 300px;
+    /* Más ancho para el nuevo tamaño */
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 25px 0;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+    height: 100%;
+    /* Ocupa el 100% de la altura del contenedor principal */
+}
+
+.profileSection {
+    text-align: center;
+    padding: 15px 30px 35px;
+    border-bottom: 2px solid #3c3066;
+}
+
+.avatar {
+    width: 80px;
+    /* Más grande */
+    height: 80px;
+    /* Más grande */
+    background-color: var(--accent-blue);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    border: 4px solid var(--accent-purple);
+}
+
+.accountTitle {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.loremText {
+    font-size: 0.8em;
+    color: var(--text-muted);
+}
+
+.menu {
+    padding: 10px 0;
+}
+
+.sidebarItem {
+    display: flex;
+    align-items: center;
+    padding: 15px 35px;
+    margin: 8px 0;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: background-color 0.3s, color 0.3s, border-left 0.3s;
+}
+
+.sidebarItem:hover {
+    color: var(--text-light);
+}
+
+.sidebarItem.active {
+    background: linear-gradient(90deg, #3c3066 0%, transparent 100%);
+    color: var(--text-light);
+    border-left: 5px solid var(--accent-blue);
+}
+
+.sidebarIcon {
+    margin-right: 18px;
+    font-size: 1.4em;
+    /* Iconos más grandes */
+}
+
+.sidebarLabel {
+    font-size: 1em;
+    /* Texto más grande */
+    font-weight: 500;
+}
+
+/* -------------------- CONTENIDO PRINCIPAL -------------------- */
+.mainContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    height: 100%;
+    /* Quitamos el scroll de aquí, lo ponemos en las secciones */
+    overflow-y: hidden;
+}
+
+/* Header Bar (Búsqueda y Título) */
+.headerBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    gap: 30px;
+    flex-shrink: 0;
+    /* Evita que el header se encoja */
+}
+
+.searchBox {
+    background-color: #3c3066;
+    border-radius: 12px;
+    padding: 12px 20px;
+    flex-grow: 0.5;
+    max-width: 1000px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.searchInput {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    width: 100%;
+    outline: none;
+    font-size: 0.9em;
+}
+
+.title {
+    font-size: 2em;
+    /* Título grande */
+    font-weight: 600;
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* --- CONTENEDOR DE VISTAS (AÑADIDO PARA LA TRANSICIÓN) --- */
+.contentWrapper {
+    flex-grow: 1;
+    position: relative;
+    /* Permite que las secciones internas se posicionen */
+    overflow: hidden;
+    /* Oculta el contenido que está fuera de la vista */
+    margin-top: -30px;
+    /* Compensa el gap del mainContent para ocupar el 100% de la altura restante */
+}
+
+/* --- SECCIÓN DE CONTENIDO INDIVIDUAL (AÑADIDO PARA LA TRANSICIÓN) --- */
+.contentSection {
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    /* Estado inicial: Oculto y fuera de la vista */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(100%);
+
+    /* Transición suave */
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+
+    /* Contenido interno */
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* --- SECCIÓN ACTIVA (AÑADIDO PARA LA TRANSICIÓN) --- */
+.contentSection.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+    z-index: 10;
+}
+
+
+/* --- ESTILO ORIGINAL: Mensaje de Bienvenida a Ancho Completo --- */
+.welcomeMessage {
+    background-color: transparent;
+    /* El fondo lo pone .contentSection */
+    border-radius: 18px;
+    padding: 0;
+    box-shadow: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 40px;
+    flex-grow: 1;
+    color: var(--text-light);
+    font-weight: bold;
+    white-space: pre-wrap;
+}
+
+.welcomeTitle {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+/* ----------------------------------------------------------------- */
+
+/* 🌟 ESTILOS DEL RELOJ ANALÓGICO */
+.analogClockContainer {
+    width: var(--clock-size);
+    height: var(--clock-size);
+    border-radius: 50%;
+    background-color: var(--bg-dark);
+    border: 4px solid var(--accent-blue);
+    position: relative;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+    flex-shrink: 0;
+}
+
+/* Punto central del reloj */
+.centerDot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--accent-purple);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+/* Estilo base para todas las manecillas */
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: 0% 100%;
+    border-radius: 4px;
+    transform: rotate(90deg);
+    transition: transform 0.1s cubic-bezier(0.4, 2.3, 0.6, 1.0);
+}
+
+/* Manecilla de Horas */
+.hourHand {
+    width: 4px;
+    height: calc(var(--clock-size) * 0.3);
+    background-color: var(--text-light);
+    margin-left: -2px;
+}
+
+/* Manecilla de Minutos */
+.minuteHand {
+    width: 3px;
+    height: calc(var(--clock-size) * 0.4);
+    background-color: var(--text-muted);
+    margin-left: -1.5px;
+}
+
+/* Manecilla de Segundos */
+.secondHand {
+    width: 2px;
+    height: calc(var(--clock-size) * 0.45);
+    background-color: var(--accent-purple);
+    margin-left: -1px;
+    z-index: 5;
+}
+
+/* ------------------------------------------- */
+
+/* Fila de Tarjetas Superiores */
+.topCardsRow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    flex-shrink: 0;
+    padding-top: 30px;
+    border-top: 1px solid #3c3066;
+}
+
+.statCard {
+    background-color: var(--bg-dark);
+    /* Usar bg-dark para diferenciarlo del fondo de la sección */
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.cardTitle {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+
+.cardValue {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--accent-blue);
+    margin: 0;
+}
+
+.cardDescription {
+    font-size: 0.7em;
+    color: var(--accent-purple);
+    margin-top: 5px;
+}
+
+/* Estilos de las vistas */
+.contentSection h2 {
+    color: var(--accent-purple);
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.contentSection p {
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ============================================== */
+/* === MEDIA QUERIES PARA RESPONSIVIDAD === */
+/* ============================================== */
+
+/* --- Tablet y Pantallas Medianas (Máx. 1024px) --- */
+@media (max-width: 1024px) {
+    body {
+        font-size: 18px;
+    }
+
+    .dashboardContainer {
+        padding: 15px;
+        gap: 20px;
+    }
+
+    .sidebar {
+        width: 250px;
+    }
+
+    .analogClockContainer {
+        --clock-size: 250px;
+    }
+
+    .topCardsRow {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+
+/* --- Móvil (Máx. 600px) --- */
+@media (max-width: 600px) {
+    body {
+        font-size: 16px;
+    }
+
+    .dashboardContainer {
+        flex-direction: column;
+        height: 100%;
+        /* Mantenemos 100% de la altura para el scroll */
+        overflow-y: auto;
+        padding: 10px;
+        gap: 15px;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 15px 0;
+        margin-bottom: 10px;
+    }
+
+    .menu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        gap: 5px;
+    }
+
+    .sidebarItem {
+        padding: 10px;
+        margin: 0;
+        border-radius: 8px;
+        border-left: none !important;
+    }
+
+    .sidebarItem.active {
+        border-left: none !important;
+        background: var(--clock-color);
+    }
+
+    .sidebarLabel {
+        display: none;
+    }
+
+    .sidebarIcon {
+        margin-right: 0;
+        font-size: 1.5em;
+    }
+
+    .profileSection {
+        display: none;
+    }
+
+    .mainContent {
+        width: 100%;
+        height: auto;
+        overflow: visible;
+        padding-bottom: 20px;
+    }
+
+    .headerBar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 1.5em;
+    }
+
+    .searchBox {
+        width: 100%;
+        max-width: none;
+        height: auto;
+    }
+
+    .analogClockContainer {
+        --clock-size: 150px;
+        /* Tamaño más manejable en móvil */
+        align-self: center;
+    }
+
+    .welcomeMessage {
+        padding: 0;
+    }
+
+    .welcomeTitle {
+        font-size: 1.1em;
+    }
+
+    .topCardsRow {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Ajuste crucial para las secciones en móvil */
+    .contentWrapper {
+        position: static;
+        flex-grow: 1;
+        height: auto;
+        margin-top: 0;
+    }
+
+    .contentSection {
+        position: static;
+        opacity: 1;
+        transform: translateX(0);
+        min-height: 400px;
+        /* Altura mínima para que se vea el contenido */
+        margin-bottom: 15px;
+        /* Separación entre secciones (si no fueran absolutas) */
+        transition: none;
+        /* Desactivamos la transición en móvil para simplificar el flujo vertical */
+    }
+
+    /* En móvil, solo mostramos la sección activa, pero sin el posicionamiento absoluto */
+    .contentSection:not(.active) {
+        display: none;
+    }
+
+}

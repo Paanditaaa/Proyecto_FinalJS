@@ -15,47 +15,35 @@ html {
 .login-container {
   width: 100vw;
   height: 100vh;
-  background-image: url("https://images.unsplash.com/photo-1550547660-d9450f859349");
+  background-image: url("./assets/background.jpg");
   background-size: cover;
   background-position: center;
   position: relative;
 }
 
-.title {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #b28af7;
-  font-size: 60px;
-  font-weight: 700;
-}
 
-.card {
-  width: 360px;
-  background: #faf6f6;
-  padding: 30px;
-  border-radius: 20px;
+.card-wrapper {
   position: absolute;
   right: 10%;
   top: 50%;
-  transform: translateY(-20%);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-.user-icon {
-  width: 120px;
-  height: 120px;
-  background: #3d2b7a;
-  border-radius: 50%;
-  position: absolute;
-  top: -60px;
-  left: calc(50% - 60px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+.card {
+  width: 400px;
+  height: 300px;
+  background: #FAF7F2;
+  padding: 30px;
+  border-radius: 36px;
+  position: relative;
+  box-shadow: 10px 10px 8px rgba(0, 0, 0, 0.25);
 }
+
+
 
 .avatar-img {
   width: 100%;
@@ -72,7 +60,7 @@ html {
   padding: 12px 15px;
   border-radius: 10px;
   border: 2px solid #ddd;
-  margin-top: 25px;
+  margin-top: 50px;
   width: 100%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -92,15 +80,19 @@ html {
 }
 
 .btn {
-  margin-top: 30px;
-  width: 100%;
+  position: relative;
+  width: 188px;
+  height: 55px;
   padding: 12px;
-  background: #3d2b7a;
+  background: #170741;
   color: white;
-  border: none;
-  border-radius: 10px;
+  border: 5px solid #3C1E78;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
   cursor: pointer;
   font-size: 16px;
+  font-weight: 600;
+  top: -50px;
 }
 
 .btn:hover {
@@ -115,19 +107,95 @@ html {
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
 }
 
-.profile-circle {
-  width: 120px;
-  height: 120px;
+
+.icon-login {
+  width: 219.23px;
+  height: 224px;
+  background: #170741;
   border-radius: 50%;
+  position: absolute;
+  top: -170px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
-  margin: 0 auto;
-  margin-top: -0px;
-  background: #ddd;
 }
 
-.profile-circle img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+.icon-login img {
+  width: 114.48px;
+  height: 133.34px;
+  object-fit: contain;
+}
+
+.logo {
+  width: 700px;
+  height: 700px;
+  left: 100px;
+}
+
+.error {
+  color: #000000;
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .logo {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    left: auto;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .card-wrapper {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: 350px;
+    margin-top: 80px;
+  }
+
+  .card {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+  }
+
+  .icon-login {
+    width: 160px;
+    height: 160px;
+    top: -80px;
+  }
+
+  .icon-login img {
+    width: 90px;
+    height: 100px;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 200px;
+  }
 }

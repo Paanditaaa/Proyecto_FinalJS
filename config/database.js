@@ -1,11 +1,5 @@
-const express = require("express");
 const mysql = require("mysql");
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
-
-const app = express();
-app.use(cors());
-app.use(express.json());
+const util = require("util");
 
 // Conexión MySQL
 const db = mysql.createConnection({
@@ -15,48 +9,16 @@ const db = mysql.createConnection({
     database: "proyectofinal"
 });
 
-// Endpoint LOGIN
-app.post("/api/login", (req, res) => {
-    const { usuario, password } = req.body;
-
-    if (!usuario || !password) {
-        return res.status(400).json({ message: "Datos incompletos" });
+// Conectar a la base de datos
+db.connect((err) => {
+    if (err) {
+        console.error("Error conectando a la base de datos:", err);
+        return;
     }
-
-    const query = "SELECT * FROM usuarios WHERE usuario = ?";
-
-    db.query(query, [usuario], (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ message: "Error en la base de datos" });
-        }
-
-        if (results.length === 0) {
-            return res.status(401).json({ message: "Usuario no encontrado" });
-        }
-
-        const user = results[0];
-
-        // Si no usas bcrypt
-        if (user.password !== password) {
-            return res.status(401).json({ message: "Contraseña incorrecta" });
-        }
-
-        // Crear token
-        const token = jwt.sign(
-            { id: user.id, usuario: user.usuario },
-            "CLAVE_SECRETA",
-            { expiresIn: "2h" }
-        );
-
-        res.json({
-            message: "Login exitoso",
-            token
-        });
-    });
+    console.log("Conectado a la base de datos MySQL");
 });
 
-// Iniciar servidor
-app.listen(3000, () => {
-    console.log("Servidor ejecutándose en http://localhost:3000");
-});
+// Convertir db.query a una función que retorna promesas
+db.query = util.promisify(db.query);
+
+module.exports = db;
