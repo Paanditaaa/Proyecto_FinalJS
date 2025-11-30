@@ -1,0 +1,410 @@
+/* --- Variables de Color --- */
+:root {
+    --bg-dark: #1e153e; 
+    --bg-card: #2f254f; 
+    --accent-blue: #4f46e5;
+    --accent-purple: #9333ea;
+    --text-light: #ffffff;
+    --text-muted: #a0a0a0;
+    /* AJUSTE: Mantenido */
+    --clock-size: 400px; 
+    --clock-color: #3c3066;
+}
+
+/* Asegura que el contenedor raíz ocupe todo el espacio y elimina el scroll */
+html, body, #root, .App {
+    height: 100%; 
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* Base grande para Full HD */
+    font-size: 22px; 
+    /* Elimina la barra de desplazamiento global */
+    overflow: hidden; 
+    font-family: sans-serif;
+}
+
+/* ---------------------------------------------------- */
+/* --- Layout Principal y Sidebar --- */
+/* ---------------------------------------------------- */
+
+.dashboardContainer {
+    display: flex;
+    background-color: var(--bg-dark);
+    /* Altura ajustada a la ventana */
+    height: calc(100vh - 40px); 
+    padding: 20px;
+    gap: 30px; 
+    color: var(--text-light);
+    overflow: hidden; 
+}
+
+/* -------------------- SIDEBAR -------------------- */
+.sidebar {
+    width: 300px; 
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 25px 0;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+    height: 100%; 
+}
+
+.profileSection {
+    text-align: center;
+    padding: 15px 30px 35px;
+    border-bottom: 2px solid #3c3066;
+}
+
+.avatar {
+    width: 80px; 
+    height: 80px; 
+    background-color: var(--accent-blue);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    border: 4px solid var(--accent-purple);
+}
+
+.accountTitle {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.menu {
+    padding: 10px 0;
+}
+
+.sidebarItem {
+    display: flex;
+    align-items: center;
+    padding: 15px 35px;
+    margin: 8px 0;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebarItem:hover {
+    color: var(--text-light);
+}
+
+.sidebarItem.active {
+    background: linear-gradient(90deg, #3c3066 0%, transparent 100%);
+    color: var(--text-light);
+    border-left: 5px solid var(--accent-blue);
+}
+
+.sidebarIcon {
+    margin-right: 18px;
+    font-size: 1.4em; 
+}
+
+.sidebarLabel {
+    font-size: 1em; 
+    font-weight: 500;
+}
+
+/* ---------------------------------------------------- */
+/* --- Contenido Principal y Header --- */
+/* ---------------------------------------------------- */
+
+.mainContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px; 
+    height: 100%; 
+    overflow-y: auto; 
+}
+
+/* Header Bar */
+.headerBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    gap: 30px; 
+    flex-shrink: 0; 
+}
+
+.searchInput {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    width: 100%;
+    outline: none;
+    font-size: 0.9em;
+}
+
+.title {
+    font-size: 2em; 
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Estilo Original de WelcomeMessage (Mantenido, aunque no se usa en la vista OrdenNueva) */
+.welcomeMessage {
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 40px; 
+    min-height: 80%; 
+    color: var(--text-light);
+    font-weight: bold;
+    white-space: pre-wrap; 
+}
+
+.welcomeTitle {
+    font-size: 1.5em; 
+    margin: 0;
+}
+
+/* Fila de Tarjetas Superiores (Mantenido) */
+.topCardsRow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.statCard {
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+/* --- CONTENEDOR PRINCIPAL DE ORDEN --- */
+.newOrderViewContainer {
+    /* Ocupa el espacio restante en el mainContent */
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: row; 
+    gap: 30px;
+    height: 100%; 
+}
+
+/* ------------------ PRODUCTOS DISPONIBLES ------------------ */
+.availableProducts {
+    flex-grow: 1; /* Crece para ocupar el espacio */
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    /* Permitimos scroll interno si hay demasiados productos */
+    overflow-y: auto; 
+}
+
+.sectionTitle {
+    font-size: 1.4em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text-light);
+}
+
+/* Grid para las tarjetas de productos (Ajuste para 5 por fila y responsividad) */
+.productsGrid {
+    display: grid;
+    /* Permite 5 columnas (~150px) en pantallas grandes */
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
+    gap: 20px;
+}
+
+.productCard {
+    background-color: #3c3066; 
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    
+    /* Altura mínima aumentada para tarjetas más grandes */
+    min-height: 140px; 
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.productCard:hover {
+    transform: translateY(-5px);
+    background-color: var(--accent-blue);
+}
+
+/* Estilos para la Imagen (si usas JPG/PNG) */
+.productImage {
+    width: 400px; 
+    height: 400px;
+    object-fit: contain; 
+    margin-bottom: 1px;
+}
+
+
+.productName {
+    font-size: 35px;
+    font-weight: 650;
+}
+
+.productPrice {
+    font-size: 30px;
+    color: var(--text-muted);
+}
+
+/* ------------------ RESUMEN DE ORDEN ------------------ */
+.orderSummary {
+    width: 350px; 
+    flex-shrink: 0; 
+    background-color: #fff; /* Fondo blanco */
+    border-radius: 18px;
+    padding: 30px;
+    color: #333; 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: fit-content; 
+}
+
+/* Sobrescribimos el título para el fondo blanco */
+.orderSummary .sectionTitle {
+    color: #333; 
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+.summaryDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.summaryRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1em;
+}
+
+.summaryTotal {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: var(--bg-dark); 
+}
+
+.summaryRow span:last-child {
+    font-weight: 500;
+}
+
+.summarySeparator {
+    border-top: 1px solid #ccc;
+    margin: 10px 0;
+}
+
+.processOrderButton {
+    background-color: var(--accent-blue);
+    color: var(--text-light);
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.processOrderButton:hover {
+    background-color: #3b33b7; 
+}
+
+
+/* --- Tablet y Pantallas Medianas (Máx. 1200px) --- */
+@media (max-width: 1200px) {
+    .newOrderViewContainer {
+        flex-direction: column; 
+        height: auto;
+    }
+
+    .orderSummary {
+        width: 100%; /* Ocupa todo el ancho */
+        order: -1; /* Pone el resumen arriba */
+    }
+
+    .availableProducts {
+        height: auto; 
+        overflow-y: visible; 
+    }
+}
+
+@media (max-width: 1080px) {
+    body {
+        font-size: 20px;
+    }
+    
+    .headerBar {
+        flex-wrap: nowrap; 
+        justify-content: space-between;
+    }
+    
+    .welcomeTitle {
+        font-size: 1.2em;
+    }
+}
+
+
+/* --- Móvil (Máx. 600px) --- */
+@media (max-width: 600px) {
+    body {
+        font-size: 18px; 
+    }
+
+    .dashboardContainer {
+        padding: 10px;
+        gap: 15px;
+        height: calc(100vh - 20px);
+    }
+
+    .sidebar {
+        /* Asumiendo que se oculta en móvil o se convierte en menú hamburguesa */
+        display: none; 
+    }
+    
+    .mainContent {
+        gap: 15px;
+    }
+
+    .headerBar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .title {
+        order: 1;
+    }
+    
+    .searchBox {
+        order: 2;
+    }
+    
+    .welcomeTitle {
+        font-size: 1em;
+    }
+
+    .productsGrid {
+        /* Una columna en móvil */
+        grid-template-columns: 1fr; 
+    }
+}

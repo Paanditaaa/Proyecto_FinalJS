@@ -1,0 +1,506 @@
+/* --- Variables de Color --- */
+:root {
+    --bg-dark: #1e153e; 
+    --bg-card: #2f254f; 
+    --accent-blue: #4f46e5;
+    --accent-purple: #9333ea;
+    --text-light: #ffffff;
+    --text-muted: #a0a0a0;
+    --clock-size: 400px; 
+    --clock-color: #3c3066; 
+    
+    /* Variables de Estado para Chips */
+    --status-active-bg: #4f46e530;
+    --status-active-text: #4f46e5;
+    --status-soldout-bg: #9333ea30;
+    --status-soldout-text: #9333ea;
+    --status-lowstock-bg: #fbbf2430;
+    --status-lowstock-text: #fbbf24;
+}
+
+/* Asegura que el contenedor raíz ocupe todo el espacio y elimina el scroll */
+html, body, #root, .App {
+    height: 100%; 
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* Fuente base grande */
+    font-size: 20px; 
+    overflow: hidden; 
+    font-family: sans-serif;
+}
+
+/* ---------------------------------------------------- */
+/* --- Layout Principal y Sidebar --- */
+/* ---------------------------------------------------- */
+
+.dashboardContainer {
+    display: flex;
+    background-color: var(--bg-dark);
+    height: calc(100vh - 60px); /* Ajustado a 60px para el padding de 30px */
+    padding: 30px; 
+    gap: 40px; 
+    color: var(--text-light);
+    overflow: hidden; 
+}
+
+/* -------------------- SIDEBAR -------------------- */
+.sidebar {
+    width: 300px; 
+    background-color: var(--bg-card);
+    border-radius: 20px;
+    padding: 30px 0;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+    height: 100%; 
+}
+
+.profileSection {
+    text-align: center;
+    padding: 15px 30px 40px;
+    border-bottom: 2px solid var(--clock-color);
+}
+
+.avatar {
+    width: 100px; 
+    height: 100px; 
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    border: 5px solid var(--accent-purple);
+}
+
+.accountTitle {
+    font-size: 2.2em; 
+    font-weight: bold;
+}
+
+.loremText {
+    font-size: 1.3em;
+}
+
+.menu {
+    padding: 15px 0; 
+}
+
+.sidebarItem {
+    align-items: center;
+    padding: 20px 35px; 
+    margin: 10px 0;
+    color: var(--text-muted);
+}
+
+.sidebarItem.active {
+    border-left: 6px solid var(--accent-blue);
+}
+
+.sidebarIcon {
+    margin-right: 20px;
+    font-size: 1.6em; 
+}
+
+.sidebarLabel {
+    font-size: 1.1em; 
+    font-weight: 500;
+}
+
+
+/* ---------------------------------------------------- */
+/* --- CONTENIDO PRINCIPAL (MAIN CONTENT) --- */
+/* ---------------------------------------------------- */
+
+.mainContent {
+    flex-grow: 1;
+    background-color: var(--bg-card); 
+    padding: 40px; 
+    border-radius: 20px;
+    overflow-y: auto; 
+    overflow-x: hidden; 
+}
+
+.headerBar {
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+    border-bottom: 3px solid var(--clock-color); 
+}
+
+.title {
+    font-size: 3em; 
+    font-weight: 600;
+}
+
+/* -------------------- Barra de Control de Productos -------------------- */
+
+.productsControlBar, .productsTopBar {
+    margin-bottom: 30px;
+    padding: 15px 0;
+    gap: 25px;
+}
+
+.searchContainer {
+    flex-grow: 1;
+    max-width: 800px; 
+}
+
+.searchInput {
+    padding: 20px 25px 20px 65px; 
+    border-radius: 15px;
+    font-size: 1.1em; 
+}
+
+.searchIcon {
+    left: 25px;
+    font-size: 1.5em; 
+}
+
+.buttonGroup {
+    gap: 20px;
+}
+
+.filterButton, .addProductButton {
+    padding: 20px 35px; 
+    border-radius: 15px;
+    font-size: 1.0em; 
+    gap: 12px;
+}
+
+.filterButton:hover {
+    background-color: #4c4078;
+}
+
+.addProductButton {
+    box-shadow: 0 6px 20px rgba(147, 51, 234, 0.5);
+}
+
+.addProductButton:hover {
+    background-color: #a347f8;
+    transform: translateY(-1px);
+}
+
+/* -------------------- Tabla de Productos -------------------- */
+
+.productsTableContainer {
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    width: 100%;
+}
+
+.tableHeader, .productRow {
+    display: grid;
+    /* CORRECCIÓN CLAVE: Ajuste de la cuadrícula para evitar desbordamiento y alinear columnas.
+       Se dio más espacio a Nombre, Stock y Acciones. */
+    grid-template-columns: 90px 4fr 1.5fr 2.5fr 1.5fr 1.5fr 1.8fr; 
+    align-items: center;
+    padding: 25px 25px; 
+}
+
+.tableHeader {
+    font-weight: 700;
+    font-size: 0.9em; 
+    border-radius: 20px 20px 0 0;
+}
+
+.productRow {
+    border-top: 2px solid var(--clock-color);
+    transition: background-color 0.2s;
+}
+
+.productRow:hover {
+    background-color: #3c3066; 
+}
+
+.productCell {
+    font-size: 1.0em; 
+    padding-right: 15px;
+}
+
+/* Swatch base (Color) */
+.productColor,
+.productColorSwatch {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    box-sizing: border-box;
+}
+
+/* -------------------- Chips de estado -------------------- */
+
+.statusChip,
+.status {
+    padding: 10px 20px; 
+    font-size: 0.8em;
+    min-width: 120px; 
+}
+
+.status.active, .status-active {
+    background-color: var(--status-active-bg);
+    color: var(--status-active-text);
+}
+
+.status.sold, .status-soldout {
+    background-color: var(--status-soldout-bg);
+    color: var(--status-soldout-text);
+}
+
+.status.low, .status-lowstock {
+    background-color: var(--status-lowstock-bg);
+    color: var(--status-lowstock-text);
+}
+
+/* -------------------- Footer -------------------- */
+
+.footerEasterEgg {
+    padding-top: 20px;
+}
+
+/* ---------------------------------------------------- */
+/* --- AÑADIDOS PARA FUNCIONALIDAD Y ESTÉTICA --- */
+/* ---------------------------------------------------- */
+
+/* ** VISIBILIDAD DE BOTONES DE ACCIÓN ** */
+
+.productTitleCell {
+    display: flex; 
+    align-items: center; 
+    padding-right: 15px; 
+    position: relative; 
+}
+
+.productNameAndActions {
+    display: flex; 
+    align-items: center;
+    gap: 15px; 
+}
+
+.productNameText {
+    font-weight: 500;
+    white-space: nowrap; 
+}
+
+.productActions { 
+    display: flex;
+    align-items: center;
+    gap: 5px; 
+    opacity: 1 !important; 
+    visibility: visible !important;
+}
+
+.iconActionButton {
+    background: none;
+    border: none; 
+    color: var(--text-muted); 
+    width: 40px; 
+    height: 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6em; 
+    line-height: 1; 
+}
+
+.iconActionButton:hover {
+    transform: scale(1.1);
+}
+
+
+/* -------------------- Control de Stock (Stock Control) -------------------- */
+
+.stockControl {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: var(--clock-color); 
+    border-radius: 15px;
+    padding: 10px 8px; 
+    min-width: 190px; 
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.stockButton {
+    background: var(--bg-card);
+    border: none;
+    color: var(--accent-blue);
+    font-weight: 700;
+    font-size: 1.2em;
+    cursor: pointer;
+    width: 45px; 
+    height: 45px;
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stockButton:hover {
+    background-color: rgba(79, 70, 229, 0.2);
+    color: var(--text-light);
+}
+
+.stockValue {
+    font-weight: 600;
+    font-size: 1.0em;
+    padding: 0 5px;
+    min-width: 50px;
+    text-align: center;
+    color: var(--text-light);
+}
+
+.addSpecificStockButton {
+    background-color: var(--accent-blue);
+    color: var(--text-light);
+    border: none;
+    padding: 14px 20px; 
+    border-radius: 12px;
+    font-size: 0.9em; 
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap; 
+}
+
+.addSpecificStockButton:hover {
+    background-color: #5d54ff;
+    transform: translateY(-1px);
+}
+
+
+/* -------------------- Columna de Acciones final -------------------- */
+.actionsCell {
+    text-align: right;
+}
+
+/* -------------------- Modal para Añadir/Editar Producto -------------------- */
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; 
+    backdrop-filter: blur(5px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.modalOverlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modalContent {
+    background-color: var(--bg-card);
+    padding: 50px; 
+    border-radius: 25px;
+    width: 90%;
+    max-width: 900px; 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    transform: scale(0.9);
+    transition: transform 0.3s ease-in-out;
+}
+
+.modalOverlay.open .modalContent {
+    transform: scale(1);
+}
+
+.modalHeader {
+    padding-bottom: 25px;
+    margin-bottom: 35px; 
+}
+
+.modalTitle {
+    font-size: 2.0em; 
+    font-weight: 600;
+}
+
+.closeButton {
+    font-size: 2.0em; 
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px; 
+}
+
+.formGroup.fullWidth {
+    grid-column: span 3; 
+}
+
+.formLabel {
+    font-size: 0.9em; 
+    margin-bottom: 10px; 
+    color: var(--text-muted);
+}
+
+.formInput, .formSelect, .formTextArea {
+    padding: 16px 20px; 
+    border-radius: 10px;
+    background-color: #3c3066; 
+    color: var(--text-light);
+    font-size: 1.0em;
+    border: 1px solid var(--clock-color);
+}
+
+.formInput:focus, .formSelect:focus, .formTextArea:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+}
+
+.formTextArea {
+    min-height: 150px; 
+}
+
+.modalFooter {
+    margin-top: 40px; 
+    padding-top: 25px;
+    border-top: 2px solid var(--clock-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.cancelButton, .saveButton {
+    padding: 16px 32px; 
+    border-radius: 12px;
+    font-size: 1.0em; 
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: none;
+}
+
+.cancelButton {
+    background-color: var(--clock-color);
+    color: var(--text-muted);
+}
+
+.saveButton {
+    background-color: var(--accent-purple);
+    color: var(--text-light);
+}
+
+.cancelButton:hover {
+    background-color: #4c4078;
+    color: var(--text-light);
+}
+
+.saveButton:hover {
+    background-color: #a347f8;
+}
