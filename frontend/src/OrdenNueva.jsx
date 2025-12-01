@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './OrdenNueva.css';
 import { FaHome, FaBox, FaTruck, FaCog } from 'react-icons/fa';
 import { BsFillDoorOpenFill } from "react-icons/bs";
@@ -7,21 +8,6 @@ import { MdOutlineHistory } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
-import hamburbur from './assets/Hamburguesaa.JPG';
-import awita from './assets/agua.JPG';
-import papitas from './assets/papas.JPG';
-
-
-
-// 🍔 Datos de los productos disponibles
-const initialProducts = [
-    { id: 1, name: "Agua natural (1 litro)", price: 25.00, icon: awita },
-    { id: 2, name: "Hamburguesa sencilla (120gr)", price: 120.00, icon: hamburbur },
-    { id: 3, name: "Papas medianas (150gr)", price: 130.00, icon: papitas},
-    { id: 4, name: "Agua embotellada", price: 15.00, icon: () => <i className="fa-solid fa-bottle-water">💧</i> },
-    { id: 5, name: "Papas Fritas", price: 35.00, icon: () => <i className="fa-solid fa-fries">🍟</i> },
-    { id: 6, name: "Té Frío", price: 30.00, icon: () => <i className="fa-solid fa-glass-water">🧊</i> },
-];
 
 // -------------------------------------------------------------
 // Componentes de la Interfaz
@@ -30,38 +16,36 @@ const initialProducts = [
 /**
  * Representa una tarjeta de producto disponible.
  */
-const ProductCard = ({ product, icon, onAdd }) => (
-    <div 
-        className="productCard" 
+const ProductCard = ({ product, onAdd }) => (
+    <div
+        className="productCard"
         onClick={() => onAdd(product)}
-        title={`Añadir ${product.name} a la orden`}
+        title={`Añadir ${product.Nombre} a la orden`}
     >
-        {/* Lógica para renderizar icono (función) o imagen (si fuera un string) */}
-        {typeof icon === 'function' ? (
-            icon({ className: "productIcon" })
+        {/* Si hay imagen, mostrarla, si no, un icono genérico */}
+        {product.Imagen ? (
+            <img src={product.Imagen} alt={product.Nombre} className="productImage" />
         ) : (
-            // Usa <img /> si el 'icon' es una ruta de imagen (JPG/PNG)
-            <img src={icon} alt={product.name} className="productImage" />
+            <div className="productIcon">🍔</div>
         )}
-        
-        <span className="productName">{product.name}</span>
-        <span className="productPrice">${product.price.toFixed(2)}</span>
+
+        <span className="productName">{product.Nombre}</span>
+        <span className="productPrice">${parseFloat(product.Precio).toFixed(2)}</span>
     </div>
 );
 
 /**
  * Lista de Productos Disponibles.
  */
-const AvailableProducts = ({ onProductAdd }) => {
+const AvailableProducts = ({ products, onProductAdd }) => {
     return (
         <div className="availableProducts">
             <h2 className="sectionTitle">Productos Disponibles</h2>
             <div className="productsGrid">
-                {initialProducts.map((product) => (
-                    <ProductCard 
-                        key={product.id} 
-                        product={product} 
-                        icon={product.icon} 
+                {products.map((product) => (
+                    <ProductCard
+                        key={product.IDPlatillo}
+                        product={product}
                         onAdd={onProductAdd}
                     />
                 ))}
@@ -73,30 +57,30 @@ const AvailableProducts = ({ onProductAdd }) => {
 /**
  * Resumen de Orden y Totales.
  */
-const OrderSummary = ({ orderItems, subtotal, taxRate = 0.16 }) => {
+const OrderSummary = ({ orderItems, subtotal, taxRate = 0.16, onProcessOrder }) => {
     const iva = subtotal * taxRate;
     const total = subtotal + iva;
 
     return (
         <div className="orderSummary">
             <h2 className="sectionTitle">Resumen de Orden</h2>
-            
+
             {/* Lista de Artículos en la Orden */}
             <div className="orderItemsList">
                 {orderItems.length > 0 ? (
                     orderItems.map((item, index) => (
                         <div key={index} className="summaryRow itemRow">
-                            <span style={{fontWeight: 'bold', fontSize: '0.9em'}}>{item.name}</span>
-                            <span style={{fontSize: '0.9em'}}>x{item.quantity} (${(item.price * item.quantity).toFixed(2)})</span>
+                            <span style={{ fontWeight: 'bold', fontSize: '0.9em' }}>{item.Nombre}</span>
+                            <span style={{ fontSize: '0.9em' }}>x{item.quantity} (${(item.Precio * item.quantity).toFixed(2)})</span>
                         </div>
                     ))
                 ) : (
-                    <p style={{fontSize: '0.9em', color: '#666', marginBottom: '15px'}}>
+                    <p style={{ fontSize: '0.9em', color: '#666', marginBottom: '15px' }}>
                         Aún no hay productos en la orden. Haz clic para agregar.
                     </p>
                 )}
             </div>
-            
+
             {/* Detalles de Totales */}
             <div className="summaryDetails">
                 <div className="summaryRow">
@@ -114,7 +98,7 @@ const OrderSummary = ({ orderItems, subtotal, taxRate = 0.16 }) => {
                 </div>
             </div>
 
-            <button className="processOrderButton" disabled={orderItems.length === 0}>
+            <button className="processOrderButton" disabled={orderItems.length === 0} onClick={onProcessOrder}>
                 Procesar Orden
             </button>
         </div>
@@ -125,18 +109,36 @@ const OrderSummary = ({ orderItems, subtotal, taxRate = 0.16 }) => {
  * Contenedor principal para la vista de "Orden nueva" y su LÓGICA.
  */
 const NewOrderView = () => {
+    const [products, setProducts] = useState([]);
     const [orderItems, setOrderItems] = useState([]);
-    const [subtotal, setSubtotal] = useState(0.00); 
+    const [subtotal, setSubtotal] = useState(0.00);
+
+    useEffect(() => {
+        fetchMenu();
+    }, []);
+
+    const fetchMenu = async () => {
+        try {
+            console.log("Fetching menu...");
+            const response = await axios.get('http://localhost:3001/api/menu');
+            console.log("Menu response:", response.data);
+            if (response.data && response.data.message) {
+                setProducts(response.data.message);
+            }
+        } catch (error) {
+            console.error("Error loading menu:", error);
+        }
+    };
 
     // Lógica para añadir/incrementar un producto
     const handleProductAdd = (product) => {
         setOrderItems(prevItems => {
-            const existingItem = prevItems.find(item => item.id === product.id);
-            
+            const existingItem = prevItems.find(item => item.IDPlatillo === product.IDPlatillo);
+
             if (existingItem) {
                 // Si el producto ya existe, incrementa la cantidad
                 return prevItems.map(item =>
-                    item.id === product.id
+                    item.IDPlatillo === product.IDPlatillo
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 );
@@ -149,15 +151,39 @@ const NewOrderView = () => {
 
     // Recalcula el subtotal cada vez que orderItems cambia
     useEffect(() => {
-        const newSubtotal = orderItems.reduce((acc, item) => 
-            acc + (item.price * item.quantity), 0);
+        const newSubtotal = orderItems.reduce((acc, item) =>
+            acc + (item.Precio * item.quantity), 0);
         setSubtotal(newSubtotal);
     }, [orderItems]);
 
+    const handleProcessOrder = async () => {
+        if (orderItems.length === 0) return;
+
+        try {
+            // Preparar payload: { items: [{ id: IDPlatillo, quantity: number }] }
+            const payload = {
+                items: orderItems.map(item => ({
+                    id: item.IDPlatillo,
+                    quantity: item.quantity
+                }))
+            };
+
+            const response = await axios.post('http://localhost:3001/api/orders', payload);
+
+            if (response.status === 201) {
+                alert("Orden procesada exitosamente! Stock actualizado.");
+                setOrderItems([]); // Limpiar orden
+            }
+        } catch (error) {
+            console.error("Error processing order:", error);
+            alert("Error al procesar la orden.");
+        }
+    };
+
     return (
         <div className="newOrderViewContainer">
-            <AvailableProducts onProductAdd={handleProductAdd} />
-            <OrderSummary orderItems={orderItems} subtotal={subtotal} />
+            <AvailableProducts products={products} onProductAdd={handleProductAdd} />
+            <OrderSummary orderItems={orderItems} subtotal={subtotal} onProcessOrder={handleProcessOrder} />
         </div>
     );
 };

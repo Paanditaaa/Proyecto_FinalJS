@@ -1,0 +1,84 @@
+/* Estilos para el Modal de Edición y Agregar Producto */
+
+/* Override para asegurar visibilidad */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1 !important;
+    /* Force visibility */
+    pointer-events: auto !important;
+    /* Force interaction */
+}
+
+.modalContent {
+    background-color: #2c2c3e;
+    /* Coincide con el tema oscuro */
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.modalContent h2 {
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+
+.modalContent label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 14px;
+}
+
+.modalContent input,
+.modalContent select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: #1e1e2d;
+    color: white;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.modalActions button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.modalActions button:first-child {
+    background-color: #ff4d4d;
+    /* Rojo para cancelar */
+    color: white;
+}
+
+.modalActions button:last-child {
+    background-color: #4caf50;
+    /* Verde para guardar */
+    color: white;
+}
+
+.modalActions button:hover {
+    opacity: 0.9;
+}
