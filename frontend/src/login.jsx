@@ -13,8 +13,11 @@ export default function Login() {
     const navigate = useNavigate();
 
     const handleLogin = async () => {
+        setError(""); // Limpiar errores previos
+
         try {
-            const res = await fetch("http://localhost:3001/api/login", {
+            // 💡 URL CORREGIDA: Usa /api/user/login para coincidir con tu router Express
+            const res = await fetch("http://localhost:3002/api/user/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ user_mail: usuario, user_password: password }),
@@ -22,19 +25,33 @@ export default function Login() {
 
             const data = await res.json();
 
+            // Manejo de errores del servidor (ej. 401 Unauthorized)
             if (!res.ok) {
-                setError(data.message);
+                setError(data.message || "Error: Credenciales inválidas o servidor no responde.");
                 return;
             }
 
-            // Guardar el token si lo necesitas
-            localStorage.setItem("token", data.message);
+            // Lógica de Verificación de Rol
+            const userToken = data.token;
+            const userRole = data.role;
+
+            // Verifica si el rol es 'admin'
+            if (userRole !== "admin") {
+                setError("Acceso denegado. Solo los administradores pueden ingresar.");
+                return;
+            }
+
+            // Si es 'admin', procede a guardar datos
+            localStorage.setItem("token", userToken);
+            localStorage.setItem("userName", usuario);
+            localStorage.setItem("userRole", userRole);
 
             // Redirigir al dashboard
             navigate("/dashboard");
 
         } catch (error) {
-            setError("Error al conectar con el servidor");
+            console.error("Error al conectar o procesar JSON:", error);
+            setError("Error al conectar con el servidor.");
         }
     };
 
@@ -53,6 +70,8 @@ export default function Login() {
                     <div className="input-group">
                         <img src={user} alt="user" className="icon" />
                         <input
+                            id="login-usuario"
+                            name="usuario"
                             type="text"
                             placeholder="Usuario"
                             value={usuario}
@@ -63,6 +82,8 @@ export default function Login() {
                     <div className="input-group">
                         <img src={lock} alt="lock" className="icon" />
                         <input
+                            id="login-password"
+                            name="password"
                             type="password"
                             placeholder="Contraseña"
                             value={password}

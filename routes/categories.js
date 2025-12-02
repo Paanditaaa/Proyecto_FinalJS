@@ -14,4 +14,17 @@ router.get("/", async (req, res, next) => {
     }
 });
 
+// POST /api/categories - Crear una nueva categoría
+router.post("/", async (req, res, next) => {
+    try {
+        const { Nombre } = req.body;
+        const query = "INSERT INTO categoria (Nombre) VALUES (?)";
+        await db.query(query, [Nombre]);
+        return res.status(201).json({ code: 201, message: "Categoría creada exitosamente" });
+    } catch (error) {
+        console.error("Error creating category:", error);
+        return res.status(500).json({ code: 500, message: "Error al crear la categoría" });
+    }
+});
+
 module.exports = router;

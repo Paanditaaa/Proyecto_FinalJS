@@ -5,6 +5,7 @@ import { FaHome, FaBox, FaTruck, FaCog } from 'react-icons/fa';
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { MdOutlineHistory } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
+import UserAvatar from './components/UserAvatar';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -129,7 +130,7 @@ function Dashboard() {
             {/* -------------------- SIDEBAR -------------------- */}
             <div className="sidebar">
                 <div className="profileSection">
-                    <div className="avatar" />
+                    <UserAvatar />
                     <h2 className="accountTitle">ACCOUNT</h2>
                     <p className="loremText">Buen dia</p>
                 </div>

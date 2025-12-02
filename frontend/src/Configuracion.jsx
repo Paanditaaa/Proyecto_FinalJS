@@ -10,7 +10,7 @@ import { FaHome, FaBox, FaTruck, FaCog, FaDatabase, FaShieldAlt, FaEnvelope, FaG
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { MdOutlineHistory } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
-
+import UserAvatar from './components/UserAvatar';
 // --- Componente de Modal Personalizado (Reemplaza alert/confirm) ---
 const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose }) => {
     if (!isOpen) return null;
@@ -49,7 +49,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose }) => {
         fontSize: '0.9em',
         transition: 'background-color 0.2s',
     };
-    
+
     // Colores basados en variables del CSS para coherencia
     const confirmButtonStyle = {
         ...buttonStyle,
@@ -71,10 +71,10 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose }) => {
     return (
         <div style={modalStyle}>
             <div style={contentStyle}>
-                <h3 style={{ 
-                    marginTop: 0, 
-                    borderBottom: '1px solid #3c3066', 
-                    paddingBottom: '15px', 
+                <h3 style={{
+                    marginTop: 0,
+                    borderBottom: '1px solid #3c3066',
+                    paddingBottom: '15px',
                     marginBottom: '20px',
                     color: type === 'confirm' ? '#ef4444' : '#4f46e5' // Color del título según el tipo
                 }}>{title}</h3>
@@ -168,11 +168,11 @@ function Configuracion() {
 
     // --- Estados del Modal ---
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalContent, setModalContent] = useState({ 
-        title: '', 
-        message: '', 
-        type: 'alert', 
-        onConfirm: null 
+    const [modalContent, setModalContent] = useState({
+        title: '',
+        message: '',
+        type: 'alert',
+        onConfirm: null
     });
 
     const showModal = (title, message, type = 'alert', onConfirm = null) => {
@@ -229,14 +229,14 @@ function Configuracion() {
             handleResetConfirm
         );
     };
-    
+
     const handleExport = () => {
         // Lógica para generar un archivo JSON o TXT de la configuración
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataStr);
         downloadAnchorNode.setAttribute("download", "configuracion_exportada.json");
-        document.body.appendChild(downloadAnchorNode); 
+        document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
     };
@@ -244,7 +244,7 @@ function Configuracion() {
     const handleTestConnection = () => {
         // Simulación de conexión
         console.log("Probando conexión a DB con:", config.dbHost, config.dbUser);
-        
+
         // Simular un tiempo de espera
         setTimeout(() => {
             const success = Math.random() > 0.3; // 70% de éxito
@@ -283,7 +283,7 @@ function Configuracion() {
             {/* -------------------- SIDEBAR -------------------- */}
             <div className="sidebar">
                 <div className="profileSection">
-                    <div className="avatar" />
+                    <UserAvatar />
                     <h2 className="accountTitle">ACCOUNT</h2>
                     <p className="loremText">Buen dia</p>
                 </div>
@@ -305,7 +305,7 @@ function Configuracion() {
                 </div>
 
                 <div className="configGrid">
-                    
+
                     {/* --- 1. Tarjeta de Configuración General --- */}
                     <div className="configCard general">
                         <div className="cardHeader">
@@ -441,7 +441,7 @@ function Configuracion() {
                         />
                         <SwitchToggle
                             isChecked={true} // Asumimos que el log de auditoría está siempre activado
-                            onToggle={() => {}} // No permitir desactivar
+                            onToggle={() => { }} // No permitir desactivar
                             label="Registro de Auditoría Detallado"
                             subtext="Mantiene un registro de todas las acciones importantes de los usuarios (activo)."
                         />
@@ -461,12 +461,12 @@ function Configuracion() {
                     </div>
                 </div>
             </div>
-            
+
             {/* -------------------- ACCIONES FIJAS AL PIE -------------------- */}
-            <FooterActions 
-                onSave={handleSave} 
+            <FooterActions
+                onSave={handleSave}
                 onReset={handleReset} // Ahora llama a la función que dispara el modal de confirmación
-                onExport={handleExport} 
+                onExport={handleExport}
             />
 
             {/* -------------------- MODAL GLOBAL -------------------- */}

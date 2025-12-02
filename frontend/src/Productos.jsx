@@ -7,17 +7,10 @@ import { FaHome, FaBox, FaTruck, FaCog, FaSearch, FaFilter } from 'react-icons/f
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { MdOutlineHistory } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
-
+import UserAvatar from './components/UserAvatar';
 // --- Componente de Fila de Producto (ProductRow) ---
-const ProductRow = ({ id, colorClass, name, status, stock, unit, category, onAddStockClick, onEditClick, onDeleteClick, handleStockChange }) => {
+const ProductRow = ({ id, colorClass, name, status, stock, unit, category, onAddStockClick, onEditClick, onDeleteClick }) => {
 
-    // Función local para sumar 1 unidad
-    const increment = () => handleStockChange(id, 1);
-
-    // Función local para restar 1 unidad
-    const decrement = () => handleStockChange(id, -1);
-
-    // Función para determinar el emoji basado en la unidad
     const getUnitIcon = (unit) => {
         switch (unit ? unit.toLowerCase() : '') {
             case 'kg':
@@ -34,7 +27,6 @@ const ProductRow = ({ id, colorClass, name, status, stock, unit, category, onAdd
         }
     };
 
-    // El stock ahora incluye el ícono antes de la unidad.
     const displayStock = `${stock} ${getUnitIcon(unit)} ${unit}`;
 
     return (
@@ -42,32 +34,23 @@ const ProductRow = ({ id, colorClass, name, status, stock, unit, category, onAdd
             <td className="productCell"><div className={`productColor ${colorClass}`} /></td>
             <td className="productCell productTitleCell">
                 <div className="productNameAndActions">
-                    {/* Nombre del producto */}
                     <span className="productNameText">{name}</span>
-
-                    {/* Botones de acción SIEMPRE visibles con EMOJIS */}
                     <div className="productActions">
-                        {/* Botón de Editar con Emoji ✏️ */}
-                        <button className="iconActionButton edit" onClick={onEditClick} title="Editar Producto">✏️</button>
-                        {/* Botón de Eliminar con Emoji 🗑️ */}
-                        <button className="iconActionButton delete" onClick={onDeleteClick} title="Eliminar Producto">🗑️</button>
+                        <button className="iconActionButton edit" onClick={() => onEditClick(id)} title="Editar Producto">✏️</button>
+                        <button className="iconActionButton delete" onClick={() => onDeleteClick(id)} title="Eliminar Producto">🗑️</button>
                     </div>
                 </div>
             </td>
             <td className="productCell"><span className={`status ${status ? status.toLowerCase() : ''}`}>{status}</span></td>
+
             <td className="productCell">
-                {/* Control de Stock Funcional con Emojis */}
-                <div className="stockControl">
-                    {/* Botón de Quitar con Emoji ➖ */}
-                    <button className="stockButton minus" onClick={decrement}>➖</button>
-                    <span className="stockValue">{displayStock}</span>
-                    {/* Botón de Agregar con Emoji ➕ */}
-                    <button className="stockButton plus" onClick={increment}>➕</button>
-                </div>
+                <span className="stockValueStatic">{displayStock}</span>
             </td>
+
             <td className="productCell">{category}</td>
-            {/* Celda de acción para añadir cantidad específica con emoji de caja */}
+
             <td className="productCell actionsCell">
+                {/* Llama a la función del componente padre para abrir el modal de agregar stock */}
                 <button className="addSpecificStockButton" onClick={onAddStockClick}>
                     <IoMdAdd /> Add Qty 📦
                 </button>
@@ -76,44 +59,45 @@ const ProductRow = ({ id, colorClass, name, status, stock, unit, category, onAdd
     );
 };
 
+
 // --- Componente Principal (Productos) ---
 function Productos() {
-    // 1. Uso de useState para gestionar el stock
+    // ESTADOS
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [editingProduct, setEditingProduct] = useState(null);
     const [isAddingProduct, setIsAddingProduct] = useState(false);
-    const [editForm, setEditForm] = useState({ name: '', unit: '' });
+
+    // ⭐ ESTADOS PARA AGREGAR STOCK
+    const [isAddingStock, setIsAddingStock] = useState(false);
+    const [stockToUpdate, setStockToUpdate] = useState({ id: null, name: '', currentStock: 0, newStockAmount: '' });
+
+    // Formulario de edición
+    const [editForm, setEditForm] = useState({ name: '', unit: '', categoryId: '' });
+
     const [addForm, setAddForm] = useState({ name: '', categoryId: '', stock: '', unit: '' });
 
-    useEffect(() => {
-        fetchProducts();
-        fetchCategories();
-    }, []);
+    // ESTADOS PARA AGREGAR CATEGORÍA
+    const [isAddingCategory, setIsAddingCategory] = useState(false);
+    const [addCategoryForm, setAddCategoryForm] = useState({ Nombre: '' });
 
-    const fetchProducts = async () => {
-        try {
-            const response = await axios.get('http://localhost:3001/api/products');
-            if (response.data && response.data.message) {
-                const mappedProducts = response.data.message.map((p, index) => ({
-                    id: p.IDProducto,
-                    colorClass: `color${(index % 8) + 1}`, // Cycle through colors
-                    name: p.Nombre,
-                    status: p.Stock > 10 ? 'Active' : (p.Stock > 0 ? 'Low' : 'Sold'), // Calculate status
-                    stock: p.Stock || 0, // Use Stock or 0
-                    unit: p.UnidadMedida || 'unidades',
-                    category: p.IDCategoria // Placeholder for category name
-                }));
-                setProducts(mappedProducts);
-            }
-        } catch (error) {
-            console.error("Error loading products:", error);
-        }
+
+    // FUNCIÓN AUXILIAR PARA OBTENER EL NOMBRE DE LA CATEGORÍA
+    const getCategoryNameById = (categoryId) => {
+        const category = categories.find(
+            cat => cat.IDCategoria?.toString() === categoryId?.toString()
+        );
+        return category ? category.Nombre : 'General / No Asignada';
     };
 
+
+    // FETCH CATEGORIES
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/api/categories');
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:3002/api/categories', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             if (response.data && response.data.message) {
                 setCategories(response.data.message);
             }
@@ -122,35 +106,65 @@ function Productos() {
         }
     };
 
-    // 2. Función que modifica el estado (stock)
-    const handleStockChange = (productId, change) => {
-        setProducts(prevProducts =>
-            prevProducts.map(product => {
-                if (product.id === productId) {
-                    const newStock = Math.max(0, product.stock + change); // Evita stock negativo
 
-                    // Actualiza el estado (status) automáticamente si el stock es 0
-                    let newStatus = product.status;
-                    if (newStock === 0) {
-                        newStatus = 'Sold';
-                    } else if (newStock > 0 && newStock <= 10 && product.unit !== 'unidades') { // Ejemplo simple de "Low"
-                        newStatus = 'Low';
-                    } else if (newStock > 10) {
-                        newStatus = 'Active';
-                    }
+    // FETCH PRODUCTS - CORREGIDO PARA USAR STOCKMINIMO
+    const fetchProducts = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:3002/api/products', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.data && response.data.message) {
+                const mappedProducts = response.data.message.map((p, index) => {
 
-                    return { ...product, stock: newStock, status: newStatus };
-                }
-                return product;
-            })
-        );
+                    // ⭐ LECTURA DE STOCK: Usa p.StockMinimo
+                    const stockValue = p.StockMinimo !== null && p.StockMinimo !== undefined
+                        ? Number(p.StockMinimo)
+                        : 0;
+
+                    const categoryName = getCategoryNameById(p.IDCategoria);
+
+                    return {
+                        id: p.IDProducto,
+                        colorClass: `color${(index % 8) + 1}`,
+                        name: p.Nombre,
+                        // El estado se calcula en base al StockMinimo
+                        status: stockValue > 10 ? 'Active' : (stockValue > 0 ? 'Low' : 'Sold'),
+                        stock: stockValue,
+                        unit: p.UnidadMedida || 'unidades',
+                        category: categoryName,
+                        categoryId: p.IDCategoria
+                    };
+                });
+                setProducts(mappedProducts);
+            }
+        } catch (error) {
+            console.error("Error loading products:", error);
+        }
     };
 
+    // EFECTO 1: Carga las categorías al inicio
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    // EFECTO 2: Carga los productos SOLO cuando las categorías están disponibles (Sincronización)
+    useEffect(() => {
+        if (categories.length > 0) {
+            fetchProducts();
+        }
+    }, [categories]);
+
+
+    // LÓGICA DE ELIMINAR 
     const handleDeleteClick = async (product) => {
         if (window.confirm(`¿Estás seguro de que quieres eliminar "${product.name}"?`)) {
             try {
-                await axios.delete(`http://localhost:3001/api/products/${product.id}`);
-                fetchProducts(); // Refresh list
+                const token = localStorage.getItem('token');
+                await axios.delete(`http://localhost:3002/api/products/${product.id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (categories.length > 0) fetchProducts();
             } catch (error) {
                 console.error("Error deleting product:", error);
                 alert("Error al eliminar el producto");
@@ -158,26 +172,37 @@ function Productos() {
         }
     };
 
+    // LÓGICA DE EDICIÓN - INICIALIZACIÓN
     const handleEditClick = (product) => {
         setEditingProduct(product);
-        setEditForm({ name: product.name, unit: product.unit });
+        setEditForm({
+            name: product.name,
+            unit: product.unit,
+            categoryId: product.categoryId || ''
+        });
     };
 
+    // LÓGICA DE EDICIÓN - GUARDADO 
     const handleEditSave = async () => {
         if (!editingProduct) return;
         try {
-            await axios.put(`http://localhost:3001/api/products/${editingProduct.id}`, {
+            const token = localStorage.getItem('token');
+            await axios.put(`http://localhost:3002/api/products/${editingProduct.id}`, {
                 Nombre: editForm.name,
-                UnidadMedida: editForm.unit
+                UnidadMedida: editForm.unit,
+                IDCategoria: editForm.categoryId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
             });
             setEditingProduct(null);
-            fetchProducts(); // Refresh list
+            if (categories.length > 0) fetchProducts();
         } catch (error) {
             console.error("Error updating product:", error);
             alert("Error al actualizar el producto");
         }
     };
 
+    // LÓGICA DE AGREGAR PRODUCTO 
     const handleAddClick = () => {
         setIsAddingProduct(true);
         setAddForm({ name: '', categoryId: '', stock: '', unit: '' });
@@ -189,26 +214,105 @@ function Productos() {
             return;
         }
         try {
-            await axios.post('http://localhost:3001/api/products', {
+            const token = localStorage.getItem('token');
+            await axios.post('http://localhost:3002/api/products', {
                 Nombre: addForm.name,
                 IDCategoria: addForm.categoryId,
-                Stock: addForm.stock,
+                // Usamos StockMinimo para el campo de stock
+                StockMinimo: addForm.stock,
                 UnidadMedida: addForm.unit
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
             });
             setIsAddingProduct(false);
-            fetchProducts(); // Refresh list
+            if (categories.length > 0) fetchProducts();
         } catch (error) {
             console.error("Error creating product:", error);
             alert("Error al crear el producto");
         }
     };
 
+    // LÓGICA DE AGREGAR CATEGORÍA
+    const handleAddCategoryClick = () => {
+        setIsAddingCategory(true);
+        setAddCategoryForm({ Nombre: '' });
+    };
+
+    const handleAddCategorySave = async () => {
+        if (!addCategoryForm.Nombre) {
+            alert("El nombre de la categoría es obligatorio");
+            return;
+        }
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post('http://localhost:3002/api/categories', {
+                Nombre: addCategoryForm.Nombre,
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setIsAddingCategory(false);
+            fetchCategories(); // Refresca la lista de categorías
+            alert(`Categoría "${addCategoryForm.Nombre}" creada exitosamente.`);
+        } catch (error) {
+            console.error("Error al crear la categoría:", error);
+            alert("Error al crear la categoría. Inténtalo de nuevo.");
+        }
+    };
+
+    // ⭐ LÓGICA DE AGREGAR STOCK (Modal y PUT a la API)
+    const handleShowAddStockModal = (product) => {
+        setStockToUpdate({
+            id: product.id,
+            name: product.name,
+            currentStock: product.stock,
+            newStockAmount: '' // Limpiar el input al abrir
+        });
+        setIsAddingStock(true);
+    };
+
+    const handleUpdateStock = async () => {
+        const amountToAdd = Number(stockToUpdate.newStockAmount);
+
+        // Validación básica
+        if (isNaN(amountToAdd) || amountToAdd <= 0) {
+            alert("Por favor introduce una cantidad válida y positiva.");
+            return;
+        }
+
+        const newTotalStock = stockToUpdate.currentStock + amountToAdd;
+
+        try {
+            const token = localStorage.getItem('token');
+
+            // Llama a la API para actualizar StockMinimo
+            await axios.put(`http://localhost:3002/api/products/${stockToUpdate.id}`, {
+                // Envía el nuevo total bajo el campo StockMinimo
+                StockMinimo: newTotalStock,
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // Cerrar modal y refrescar la tabla
+            setIsAddingStock(false);
+            setStockToUpdate({ id: null, name: '', currentStock: 0, newStockAmount: '' });
+            if (categories.length > 0) fetchProducts();
+            alert(`Stock de ${stockToUpdate.name} actualizado a ${newTotalStock}.`);
+
+        } catch (error) {
+            console.error("Error al actualizar stock:", error);
+            alert("Error al actualizar el stock. Asegúrate de que tu API acepte el campo 'StockMinimo' en el PUT.");
+        }
+    };
+    // ⭐ FIN LÓGICA DE AGREGAR STOCK
+
+
     return (
         <div className="dashboardContainer">
-            {/* -------------------- SIDEBAR (NO MODIFICADO) -------------------- */}
+            {/* -------------------- SIDEBAR -------------------- */}
             <div className="sidebar">
                 <div className="profileSection">
-                    <div className="avatar" />
+                    <UserAvatar />
                     <h2 className="accountTitle">ACCOUNT</h2>
                     <p className="loremText">Buen dia</p>
                 </div>
@@ -222,6 +326,7 @@ function Productos() {
                     <SidebarItem icon={BsFillDoorOpenFill} label="Cerrar sesion" />
                 </div>
             </div>
+
             {/* -------------------- CONTENIDO PRINCIPAL -------------------- */}
             <div className="mainContent">
                 <div className="headerBar">
@@ -232,11 +337,18 @@ function Productos() {
                 <div className="productsTableContainer">
                     <div className="productsTopBar">
                         <div className="searchContainer">
-                            <FaSearch className="searchIcon" />
                             <input className="searchInput" placeholder="🔍 Buscar ingredientes o items..." />
                         </div>
                         <button className="filterButton"><FaFilter /> Filter by</button>
-                        <button className="addProductButton" onClick={handleAddClick}><IoMdAdd /> Add New Item 📦</button>
+
+                        {/* BOTÓN PARA AGREGAR CATEGORÍA */}
+                        <button className="filterButton" onClick={handleAddCategoryClick}>
+                            <IoMdAdd /> Nueva Categoría 🏷️
+                        </button>
+
+                        <button className="addProductButton" onClick={handleAddClick}>
+                            <IoMdAdd /> Add New Item 📦
+                        </button>
                     </div>
 
                     <table className="productsTable">
@@ -261,8 +373,8 @@ function Productos() {
                                     stock={product.stock}
                                     unit={product.unit}
                                     category={product.category}
-                                    handleStockChange={handleStockChange}
-                                    onAddStockClick={() => alert(`Añadir cantidad específica a: ${product.name}`)}
+                                    // Pasa la función para abrir el modal de stock
+                                    onAddStockClick={() => handleShowAddStockModal(product)}
                                     onEditClick={() => handleEditClick(product)}
                                     onDeleteClick={() => handleDeleteClick(product)}
                                 />
@@ -272,7 +384,31 @@ function Productos() {
                 </div>
             </div>
 
-            {/* Modal de Edición */}
+            {/* -------------------- MODAL DE AGREGAR STOCK ⭐ NUEVO -------------------- */}
+            {isAddingStock && stockToUpdate.id && (
+                <div className="modalOverlay">
+                    <div className="modalContent">
+                        <h2>Agregar Stock a: {stockToUpdate.name}</h2>
+                        <p>Stock actual: **{stockToUpdate.currentStock}**</p>
+                        <label>
+                            Cantidad a Añadir:
+                            <input
+                                type="number"
+                                placeholder="Ej: 50"
+                                value={stockToUpdate.newStockAmount}
+                                onChange={(e) => setStockToUpdate({ ...stockToUpdate, newStockAmount: e.target.value })}
+                            />
+                        </label>
+                        <div className="modalActions">
+                            <button onClick={() => setIsAddingStock(false)}>Cancelar</button>
+                            <button onClick={handleUpdateStock}>Actualizar Stock</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* -------------------- FIN MODAL DE AGREGAR STOCK -------------------- */}
+
+            {/* -------------------- MODAL DE EDICIÓN -------------------- */}
             {editingProduct && (
                 <div className="modalOverlay">
                     <div className="modalContent">
@@ -293,6 +429,21 @@ function Productos() {
                                 onChange={(e) => setEditForm({ ...editForm, unit: e.target.value })}
                             />
                         </label>
+                        <label>
+                            Categoría:
+                            <select
+                                value={editForm.categoryId}
+                                onChange={(e) => setEditForm({ ...editForm, categoryId: e.target.value })}
+                                className="modalSelect"
+                            >
+                                <option value="">Seleccionar Categoría (Opcional)</option>
+                                {categories.map(cat => (
+                                    <option key={cat.IDCategoria} value={cat.IDCategoria}>
+                                        {cat.Nombre}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
                         <div className="modalActions">
                             <button onClick={() => setEditingProduct(null)}>Cancelar</button>
                             <button onClick={handleEditSave}>Guardar</button>
@@ -301,7 +452,7 @@ function Productos() {
                 </div>
             )}
 
-            {/* Modal de Agregar Producto */}
+            {/* -------------------- MODAL DE AGREGAR PRODUCTO -------------------- */}
             {isAddingProduct && (
                 <div className="modalOverlay">
                     <div className="modalContent">
@@ -352,11 +503,33 @@ function Productos() {
                     </div>
                 </div>
             )}
+
+            {/* -------------------- MODAL DE AGREGAR CATEGORÍA -------------------- */}
+            {isAddingCategory && (
+                <div className="modalOverlay">
+                    <div className="modalContent">
+                        <h2>Agregar Nueva Categoría 🏷️</h2>
+                        <label>
+                            Nombre de la Categoría:
+                            <input
+                                type="text"
+                                value={addCategoryForm.Nombre}
+                                onChange={(e) => setAddCategoryForm({ Nombre: e.target.value })}
+                            />
+                        </label>
+                        <div className="modalActions">
+                            <button onClick={() => setIsAddingCategory(false)}>Cancelar</button>
+                            <button onClick={handleAddCategorySave}>Crear Categoría</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
 
-/* Componente para un elemento del menú lateral con navegación (NO MODIFICADO) */
+/* Componente para un elemento del menú lateral con navegación */
 const SidebarItem = ({ icon: Icon, label, isActive, path }) => {
     const navigate = useNavigate();
 

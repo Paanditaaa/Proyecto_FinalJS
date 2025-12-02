@@ -1,0 +1,675 @@
+:root {
+    --bg-dark: #1e153e;
+    --bg-card: #2f254f;
+    --accent-blue: #4f46e5;
+    --accent-purple: #9333ea;
+    --text-light: #ffffff;
+    --text-muted: #a0a0a0;
+    --success-green: #10b981;
+    --error-red: #ef4444;
+    --warning-orange: #f59e0b;
+}
+
+/* ============================================== */
+/* === AJUSTES GLOBALES Y ESCALA DE DISEÑO === */
+/* ============================================== */
+
+/* Asegura que el contenedor raíz ocupe todo el espacio y elimina el scroll */
+html,
+body,
+#root,
+.App {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* AJUSTE CLAVE: Base grande para Full HD */
+    font-size: 22px;
+    /* Elimina la barra de desplazamiento global */
+    overflow: hidden;
+    font-family: sans-serif;
+    display: block;
+}
+
+/* --- Layout Principal --- */
+.dashboardContainer {
+    display: flex;
+    background-color: var(--bg-dark);
+    /* 100% de la altura de la ventana menos el padding total (20px arriba + 20px abajo) */
+    height: 100vh;
+    padding: 20px;
+    gap: 30px;
+    /* Más espacio entre elementos */
+    color: var(--text-light);
+    overflow: hidden;
+    /* CRUCIAL: Mantiene el contenido dentro */
+}
+
+/* -------------------- SIDEBAR -------------------- */
+.sidebar {
+    width: 300px;
+    /* Más ancho para el nuevo tamaño */
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 25px 0;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+    height: 100%;
+    /* Ocupa el 100% de la altura del contenedor principal */
+}
+
+.profileSection {
+    text-align: center;
+    padding: 15px 30px 35px;
+    border-bottom: 2px solid #3c3066;
+}
+
+.avatar {
+    width: 80px;
+    /* Más grande */
+    height: 80px;
+    /* Más grande */
+    background-color: var(--accent-blue);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    border: 4px solid var(--accent-purple);
+}
+
+.accountTitle {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.loremText {
+    font-size: 0.8em;
+    color: var(--text-muted);
+}
+
+.menu {
+    padding: 10px 0;
+}
+
+.sidebarItem {
+    display: flex;
+    align-items: center;
+    padding: 15px 35px;
+    margin: 8px 0;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebarItem:hover {
+    color: var(--text-light);
+}
+
+.sidebarItem.active {
+    background: linear-gradient(90deg, #3c3066 0%, transparent 100%);
+    color: var(--text-light);
+    border-left: 5px solid var(--accent-blue);
+}
+
+.sidebarIcon {
+    margin-right: 18px;
+    font-size: 1.4em;
+    /* Iconos más grandes */
+}
+
+.sidebarLabel {
+    font-size: 1em;
+    /* Texto más grande */
+    font-weight: 500;
+}
+
+/* -------------------- CONTENIDO PRINCIPAL -------------------- */
+.mainContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.title {
+    font-size: 2em;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* ============================================== */
+/* === MEDIA QUERIES PARA RESPONSIVIDAD === */
+/* ============================================== */
+
+/* --- Tablet y Pantallas Medianas (Máx. 1024px) --- */
+@media (max-width: 1024px) {
+    body {
+        font-size: 20px;
+    }
+
+    .headerBar {
+        /* Volvemos a un layout simple en tablet */
+        flex-wrap: nowrap;
+        justify-content: space-between;
+    }
+
+    .welcomeTitle {
+        font-size: 1.2em;
+    }
+
+}
+
+
+/* --- Móvil (Máx. 600px) --- */
+@media (max-width: 600px) {
+    body {
+        font-size: 18px;
+    }
+
+    .headerBar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .title {
+        order: 1;
+    }
+
+    .welcomeTitle {
+        font-size: 1em;
+    }
+}
+
+
+/* ============================================== */
+/* === ESTILOS ESPECÍFICOS DE PROVEEDORES (PANTALLA PRINCIPAL) === */
+/* ============================================== */
+
+.proveedoresCard {
+    /* El contenedor principal de la pantalla, que simula la tarjeta de la imagen */
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    flex-grow: 1;
+    height: 100%;
+    /* Necesario para posicionar el modal correctamente */
+    position: relative;
+}
+
+.proveedoresHeader {
+    /* Contiene el título y el botón "Nuevo Proveedor" */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 5px;
+}
+
+.proveedoresTitle {
+    /* Ajuste para el título dentro de la tarjeta */
+    font-size: 1.6em;
+    font-weight: 600;
+    color: var(--text-light);
+    /* Color claro para destacar dentro del card */
+}
+
+/* Botón 'Nuevo Proveedor' */
+.newProveedorButton {
+    display: flex;
+    align-items: center;
+    /* Color basado en el botón azul de la imagen */
+    background-color: var(--accent-blue);
+    color: var(--text-light);
+    border: none;
+    padding: 10px 18px;
+    /* Ajuste el padding para coincidir con la apariencia */
+    border-radius: 8px;
+    /* Bordes redondeados */
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.newProveedorButton:hover {
+    background-color: #5d53ec;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+.buttonIcon {
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+
+/* --- Tabla de Proveedores --- */
+.proveedoresTableContainer {
+    overflow-x: auto;
+}
+
+.proveedoresTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85em;
+    text-align: left;
+}
+
+/* Encabezados de la tabla (NOMBRES, CONTACTO, etc.) */
+.proveedoresTable th {
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 10px 15px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #3c3066;
+    /* Línea separadora sutil */
+}
+
+.proveedoresTable td {
+    padding: 15px;
+    color: var(--text-light);
+    border-bottom: 1px solid #3c3066;
+    /* Línea separadora */
+    vertical-align: middle;
+    transition: all 0.3s ease;
+}
+
+/* Columna de ACCIONES */
+.accionesColumn {
+    text-align: right;
+}
+
+.accionesCell {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    /* Alineación a la derecha de los botones */
+}
+
+/* Botones de acción (Editar y Desactivar) */
+.actionButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9em;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    /* Evita que se rompa el texto en dos líneas */
+    font-weight: 500;
+}
+
+.editButton {
+    /* Color de Editar: Azul */
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--accent-blue);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+}
+
+.editButton:hover {
+    background-color: rgba(79, 70, 229, 0.2);
+    color: #8c86f0;
+    transform: translateY(-1px);
+}
+
+.deactivateButton {
+    /* Color de Desactivar: Rojo */
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--error-red);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.deactivateButton:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    transform: translateY(-1px);
+}
+
+.activateButton {
+    /* Color de Activar: Verde */
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success-green);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.activateButton:hover {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    transform: translateY(-1px);
+}
+
+/* Badge de Estado */
+.estadoBadge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75em;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+/* Estilo para estado 'Activo' (verde) */
+.estadoBadge.activo {
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    box-shadow: 0 2px 8px rgba(52, 211, 153, 0.2);
+}
+
+/* Estilo para estado 'Inactivo' (gris oscuro elegante) */
+.estadoBadge.inactivo {
+    background: linear-gradient(135deg, rgba(107, 114, 128, 0.2) 0%, rgba(75, 85, 99, 0.2) 100%);
+    color: #9ca3af;
+    border: 1px solid rgba(107, 114, 128, 0.3);
+    box-shadow: 0 2px 8px rgba(107, 114, 128, 0.1);
+}
+
+/* ============================================== */
+/* === ESTILOS PARA PROVEEDORES INACTIVOS (WAPO) === */
+/* ============================================== */
+
+/* Fila completa con efecto elegante para proveedores inactivos */
+.fila-inactiva {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.25) 0%, rgba(30, 21, 62, 0.4) 100%) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto de desvanecimiento elegante para filas inactivas */
+.fila-inactiva::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transition: left 0.6s ease;
+}
+
+.fila-inactiva:hover::before {
+    left: 100%;
+}
+
+/* Texto elegante para proveedores inactivos */
+.texto-inactivo {
+    color: #8b8b8b !important;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Efecto de tachado sutil para texto inactivo */
+.fila-inactiva td:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, #8b8b8b, transparent);
+    transition: width 0.3s ease;
+}
+
+.fila-inactiva:hover td:not(:last-child)::after {
+    width: 100%;
+}
+
+/* Botón deshabilitado con estilo elegante */
+.actionButton:disabled {
+    background-color: rgba(107, 114, 128, 0.1) !important;
+    color: #6b7280 !important;
+    border: 1px solid rgba(107, 114, 128, 0.2) !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none !important;
+}
+
+.actionButton:disabled:hover {
+    background-color: rgba(107, 114, 128, 0.1) !important;
+    color: #6b7280 !important;
+    transform: none !important;
+}
+
+/* Estilos de usabilidad mejorados */
+.proveedoresTable tbody tr {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.proveedoresTable tbody tr:hover {
+    background-color: #261c40;
+    transform: translateX(5px);
+}
+
+/* Efecto especial para hover en filas inactivas */
+.fila-inactiva:hover {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(30, 21, 62, 0.5) 100%) !important;
+    transform: translateX(5px);
+}
+
+.proveedoresTable tbody tr:last-child td {
+    border-bottom: none;
+    /* Eliminar la línea inferior de la última fila */
+}
+
+/* ============================================== */
+/* === ESTILOS DEL MODAL (NUEVO PROVEEDOR) === */
+/* ============================================== */
+
+/* Capa de fondo oscuro transparente */
+.modalOverlay {
+    /* Ocupa toda la ventana */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Oscurece el fondo */
+    background-color: rgba(0, 0, 0, 0.8);
+    /* Centra el formulario */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* CRUCIAL: Asegura que esté por encima de todo */
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+/* Contenedor del formulario/pestaña */
+.supplierModal {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #3c3066 100%);
+    border-radius: 20px;
+    padding: 35px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    color: var(--text-light);
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid #3c3066;
+    position: relative;
+}
+
+.supplierModal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+    border-radius: 20px 20px 0 0;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #3c3066;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.modalHeader h3 {
+    font-size: 1.4em;
+    font-weight: 600;
+    margin: 0;
+    background: linear-gradient(135deg, var(--text-light), var(--text-muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    /* Usamos 'x' como contenido, por eso el font-size es grande */
+    font-size: 2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    line-height: 1;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.closeButton:hover {
+    color: var(--text-light);
+    background-color: rgba(239, 68, 68, 0.1);
+    transform: rotate(90deg);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.formGroup label {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.formGroup input {
+    background-color: #3c3066;
+    border: 1px solid #55477d;
+    color: var(--text-light);
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    transform: translateY(-2px);
+}
+
+.formGroup input:hover {
+    border-color: var(--accent-purple);
+}
+
+/* Acciones del formulario (Guardar/Cancelar) */
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding-top: 20px;
+    margin-top: 10px;
+    border-top: 1px solid #3c3066;
+}
+
+.formActions button {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+}
+
+.formActions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cancelBtn {
+    background-color: transparent;
+    border: 1px solid var(--text-muted);
+    color: var(--text-muted);
+}
+
+.cancelBtn:hover {
+    background-color: rgba(160, 160, 160, 0.1);
+    border-color: var(--text-light);
+    color: var(--text-light);
+}
+
+.saveBtn {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    border: none;
+    color: var(--text-light);
+}
+
+.saveBtn:hover {
+    background: linear-gradient(135deg, #5d53ec, #a855f7);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+}
+
+/* Mensaje de confirmación */
+.confirmationMessage {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--success-green), #059669);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    z-index: 1001;
+    animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s;
+    font-weight: 500;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}

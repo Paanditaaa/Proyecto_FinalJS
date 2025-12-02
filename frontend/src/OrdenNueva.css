@@ -1,19 +1,22 @@
 /* --- Variables de Color --- */
 :root {
-    --bg-dark: #1e153e; 
-    --bg-card: #2f254f; 
+    --bg-dark: #1e153e;
+    --bg-card: #2f254f;
     --accent-blue: #4f46e5;
     --accent-purple: #9333ea;
     --text-light: #ffffff;
     --text-muted: #a0a0a0;
     /* AJUSTE: Mantenido */
-    --clock-size: 400px; 
+    --clock-size: 400px;
     --clock-color: #3c3066;
 }
 
 /* Asegura que el contenedor raíz ocupe todo el espacio y elimina el scroll */
-html, body, #root, .App {
-    height: 100%; 
+html,
+body,
+#root,
+.App {
+    height: 100%;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -21,9 +24,9 @@ html, body, #root, .App {
 
 body {
     /* Base grande para Full HD */
-    font-size: 22px; 
+    font-size: 22px;
     /* Elimina la barra de desplazamiento global */
-    overflow: hidden; 
+    overflow: hidden;
     font-family: sans-serif;
 }
 
@@ -35,22 +38,22 @@ body {
     display: flex;
     background-color: var(--bg-dark);
     /* Altura ajustada a la ventana */
-    height: calc(100vh - 40px); 
+    height: calc(100vh - 40px);
     padding: 20px;
-    gap: 30px; 
+    gap: 30px;
     color: var(--text-light);
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 /* -------------------- SIDEBAR -------------------- */
 .sidebar {
-    width: 300px; 
+    width: 300px;
     background-color: var(--bg-card);
     border-radius: 18px;
     padding: 25px 0;
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
     flex-shrink: 0;
-    height: 100%; 
+    height: 100%;
 }
 
 .profileSection {
@@ -60,8 +63,8 @@ body {
 }
 
 .avatar {
-    width: 80px; 
-    height: 80px; 
+    width: 80px;
+    height: 80px;
     background-color: var(--accent-blue);
     border-radius: 50%;
     margin: 0 auto 15px;
@@ -99,11 +102,11 @@ body {
 
 .sidebarIcon {
     margin-right: 18px;
-    font-size: 1.4em; 
+    font-size: 1.4em;
 }
 
 .sidebarLabel {
-    font-size: 1em; 
+    font-size: 1em;
     font-weight: 500;
 }
 
@@ -115,9 +118,9 @@ body {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 30px; 
-    height: 100%; 
-    overflow-y: auto; 
+    gap: 30px;
+    height: 100%;
+    overflow-y: auto;
 }
 
 /* Header Bar */
@@ -126,8 +129,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    gap: 30px; 
-    flex-shrink: 0; 
+    gap: 30px;
+    flex-shrink: 0;
 }
 
 .searchInput {
@@ -140,7 +143,7 @@ body {
 }
 
 .title {
-    font-size: 2em; 
+    font-size: 2em;
     font-weight: 600;
     color: var(--text-muted);
 }
@@ -151,21 +154,21 @@ body {
     border-radius: 18px;
     padding: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    width: 90%; 
+    width: 90%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: 40px; 
-    min-height: 80%; 
+    gap: 40px;
+    min-height: 80%;
     color: var(--text-light);
     font-weight: bold;
-    white-space: pre-wrap; 
+    white-space: pre-wrap;
 }
 
 .welcomeTitle {
-    font-size: 1.5em; 
+    font-size: 1.5em;
     margin: 0;
 }
 
@@ -189,22 +192,23 @@ body {
 /* --- CONTENEDOR PRINCIPAL DE ORDEN --- */
 .newOrderViewContainer {
     /* Ocupa el espacio restante en el mainContent */
-    flex-grow: 1; 
+    flex-grow: 1;
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
     gap: 30px;
-    height: 100%; 
+    height: 100%;
 }
 
 /* ------------------ PRODUCTOS DISPONIBLES ------------------ */
 .availableProducts {
-    flex-grow: 1; /* Crece para ocupar el espacio */
+    flex-grow: 1;
+    /* Crece para ocupar el espacio */
     background-color: var(--bg-card);
     border-radius: 18px;
     padding: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     /* Permitimos scroll interno si hay demasiados productos */
-    overflow-y: auto; 
+    overflow-y: auto;
 }
 
 .sectionTitle {
@@ -218,26 +222,28 @@ body {
 .productsGrid {
     display: grid;
     /* Permite 5 columnas (~150px) en pantallas grandes */
-    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
     gap: 20px;
 }
 
 .productCard {
-    background-color: #3c3066; 
+    background-color: #3c3066;
     border-radius: 12px;
     padding: 30px;
     text-align: center;
     cursor: pointer;
     transition: transform 0.2s, background-color 0.2s;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-    
+
     /* Altura mínima aumentada para tarjetas más grandes */
-    min-height: 140px; 
-    
+    min-height: 140px;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
+    /* 🚨 FIXED: Added position relative */
 }
 
 .productCard:hover {
@@ -247,9 +253,9 @@ body {
 
 /* Estilos para la Imagen (si usas JPG/PNG) */
 .productImage {
-    width: 400px; 
+    width: 400px;
     height: 400px;
-    object-fit: contain; 
+    object-fit: contain;
     margin-bottom: 1px;
 }
 
@@ -266,22 +272,23 @@ body {
 
 /* ------------------ RESUMEN DE ORDEN ------------------ */
 .orderSummary {
-    width: 350px; 
-    flex-shrink: 0; 
-    background-color: #fff; /* Fondo blanco */
+    width: 350px;
+    flex-shrink: 0;
+    background-color: #fff;
+    /* Fondo blanco */
     border-radius: 18px;
     padding: 30px;
-    color: #333; 
+    color: #333;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     gap: 20px;
-    height: fit-content; 
+    height: fit-content;
 }
 
 /* Sobrescribimos el título para el fondo blanco */
 .orderSummary .sectionTitle {
-    color: #333; 
+    color: #333;
     border-bottom: 1px solid #ccc;
     padding-bottom: 10px;
 }
@@ -301,7 +308,7 @@ body {
 .summaryTotal {
     font-weight: bold;
     font-size: 1.2em;
-    color: var(--bg-dark); 
+    color: var(--bg-dark);
 }
 
 .summaryRow span:last-child {
@@ -326,25 +333,51 @@ body {
 }
 
 .processOrderButton:hover {
-    background-color: #3b33b7; 
+    background-color: #3b33b7;
+}
+
+.removeItemButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 5px;
+    margin-left: 5px;
+    transition: transform 0.1s;
+    line-height: 1;
+    /* Para alinear el ícono correctamente */
+}
+
+/* Efecto al pasar el mouse */
+.removeItemButton:hover {
+    transform: scale(1.1);
+}
+
+/* Contenedor de la fila para asegurar el alineamiento */
+.orderItemsList .summaryRow.itemRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
 }
 
 
 /* --- Tablet y Pantallas Medianas (Máx. 1200px) --- */
 @media (max-width: 1200px) {
     .newOrderViewContainer {
-        flex-direction: column; 
+        flex-direction: column;
         height: auto;
     }
 
     .orderSummary {
-        width: 100%; /* Ocupa todo el ancho */
-        order: -1; /* Pone el resumen arriba */
+        width: 100%;
+        /* Ocupa todo el ancho */
+        order: -1;
+        /* Pone el resumen arriba */
     }
 
     .availableProducts {
-        height: auto; 
-        overflow-y: visible; 
+        height: auto;
+        overflow-y: visible;
     }
 }
 
@@ -352,12 +385,12 @@ body {
     body {
         font-size: 20px;
     }
-    
+
     .headerBar {
-        flex-wrap: nowrap; 
+        flex-wrap: nowrap;
         justify-content: space-between;
     }
-    
+
     .welcomeTitle {
         font-size: 1.2em;
     }
@@ -367,7 +400,7 @@ body {
 /* --- Móvil (Máx. 600px) --- */
 @media (max-width: 600px) {
     body {
-        font-size: 18px; 
+        font-size: 18px;
     }
 
     .dashboardContainer {
@@ -378,9 +411,9 @@ body {
 
     .sidebar {
         /* Asumiendo que se oculta en móvil o se convierte en menú hamburguesa */
-        display: none; 
+        display: none;
     }
-    
+
     .mainContent {
         gap: 15px;
     }
@@ -390,21 +423,21 @@ body {
         align-items: flex-start;
         gap: 10px;
     }
-    
+
     .title {
         order: 1;
     }
-    
+
     .searchBox {
         order: 2;
     }
-    
+
     .welcomeTitle {
         font-size: 1em;
     }
 
     .productsGrid {
         /* Una columna en móvil */
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
     }
 }

@@ -1,0 +1,818 @@
+/* --- Variables de Color --- */
+:root {
+    --bg-dark: #100c28;
+    /* Fondo más oscuro y profundo (casi negro con toque morado) - AJUSTADO */
+    --bg-card: #ffffff;
+    /* Fondo de la tarjeta principal (Blanco) */
+    --bg-sidebar: #251c4a;
+    /* Fondo del Sidebar (oscuro y morado) - AJUSTADO */
+    --accent-blue: #4f46e5;
+    /* Azul primario (Indigo 600) */
+    --accent-blue-hover: #3d34d1;
+    /* Azul al pasar el ratón */
+    --accent-purple: #9333ea;
+    /* Morado para acentos/sombras */
+    --text-dark: #1f2937;
+    /* Texto oscuro principal */
+    --text-muted: #6b7280;
+    /* Tono de gris suave */
+    --text-light: #f9fafb;
+    /* Texto claro (Blanco roto) */
+    --border-color: #e5e7eb;
+    /* Borde claro */
+    --header-bg: #f7f7f7;
+    /* Fondo gris muy claro para headers de tabla */
+
+    /* Colores de Estado (Mejorados) */
+    --status-completed-bg: #d1fae5;
+    /* Verde claro */
+    --status-completed-text: #065f46;
+    /* Verde oscuro */
+    --status-pending-bg: #fef3c7;
+    /* Amarillo claro */
+    --status-pending-text: #92400e;
+    /* Naranja/marrón */
+    --status-cancelled-bg: #fee2e2;
+    /* Rojo claro */
+    --status-cancelled-text: #b91c1c;
+    /* Rojo oscuro */
+
+    /* Colores para Estadísticas (NUEVOS) */
+    --stat-total-color: #4f46e5;
+    /* Azul */
+    --stat-completed-color: #10b981;
+    /* Verde esmeralda */
+    --stat-pending-color: #f59e0b;
+    /* Amarillo ámbar */
+    --stat-revenue-color: #9333ea;
+    /* Morado */
+}
+
+/* ============================================== */
+/* === AJUSTES GLOBALES Y ESCALA DE DISEÑO === */
+/* ============================================== */
+
+html,
+body,
+#root,
+.App {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 16px;
+    /* Ajuste a tamaño base más estándar */
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    /* Usando Inter para un look moderno */
+    display: block;
+}
+
+/* --- Layout Principal --- */
+.dashboardContainer {
+    display: flex;
+    background-color: var(--bg-dark);
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+    color: var(--text-light);
+    overflow: hidden;
+}
+
+/* -------------------- SIDEBAR -------------------- */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-sidebar);
+    border-radius: 12px;
+    padding: 25px 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+    height: 100%;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.profileSection {
+    text-align: center;
+    padding: 15px 20px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    border: 3px solid var(--accent-purple);
+}
+
+.accountTitle {
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
+.loremText {
+    font-size: 0.75em;
+    color: var(--text-muted);
+}
+
+.menu {
+    padding: 10px 0;
+    flex-grow: 1;
+}
+
+.settingsMenu {
+    padding: 10px 0;
+}
+
+.separator {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.15);
+    margin: 10px 25px;
+}
+
+.sidebarItem {
+    display: flex;
+    align-items: center;
+    padding: 12px 25px;
+    margin: 4px 0;
+    cursor: pointer;
+    color: var(--text-light);
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.sidebarItem:hover {
+    opacity: 1;
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--text-light);
+}
+
+.sidebarItem.active {
+    opacity: 1;
+    font-weight: 600;
+    background: linear-gradient(90deg, var(--accent-blue) 0%, transparent 100%);
+    border-left: 4px solid var(--accent-blue);
+    padding-left: 21px;
+}
+
+.sidebarIcon {
+    margin-right: 15px;
+    font-size: 1.2em;
+}
+
+.sidebarLabel {
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+/* -------------------- CONTENIDO PRINCIPAL -------------------- */
+.mainContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    padding-right: 10px;
+    overflow-y: auto;
+}
+
+/* Header Bar (Título y Notificaciones/Iconos) */
+.headerBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 5px;
+    color: var(--text-light);
+    flex-wrap: wrap;
+}
+
+.pageHeader {
+    flex-grow: 1;
+}
+
+.title {
+    font-size: 2.2em;
+    font-weight: 800;
+    color: var(--text-light);
+    margin-bottom: 2px;
+}
+
+.subtitle {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin: 0;
+}
+
+/* NUEVO: Barra de Búsqueda */
+.searchBar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 0 30px;
+    min-width: 300px;
+}
+
+.searchInput {
+    padding: 10px 15px 10px 45px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9em;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-light);
+    outline: none;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+.searchInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.searchInput:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.searchIcon {
+    position: absolute;
+    left: 15px;
+    font-size: 1.1em;
+    color: var(--text-muted);
+}
+
+.notificationIcons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-left: 20px;
+}
+
+.headerIcon {
+    font-size: 1.6em;
+    cursor: pointer;
+    transition: color 0.2s;
+    color: var(--text-light);
+}
+
+.headerIcon:hover {
+    color: var(--accent-purple);
+}
+
+.notificationActive {
+    position: relative;
+}
+
+.notificationActive::after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    border: 2px solid var(--bg-dark);
+}
+
+.userProfileMini {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* -------------------- SECCIÓN DE ESTADÍSTICAS -------------------- */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.statCard {
+    background-color: var(--bg-sidebar);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statIconWrapper {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+}
+
+.statIcon {
+    font-size: 1.2em;
+}
+
+.statTitle {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    margin: 0;
+    font-weight: 500;
+}
+
+.statValue {
+    font-size: 1.5em;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Colores Dinámicos para StatCards */
+.statTotal .statIconWrapper {
+    background-color: rgba(79, 70, 229, 0.2);
+}
+
+.statTotal .statIcon {
+    color: var(--stat-total-color);
+}
+
+.statCompleted .statIconWrapper {
+    background-color: rgba(16, 185, 129, 0.2);
+}
+
+.statCompleted .statIcon {
+    color: var(--stat-completed-color);
+}
+
+.statPending .statIconWrapper {
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+.statPending .statIcon {
+    color: var(--stat-pending-color);
+}
+
+.statRevenue .statIconWrapper {
+    background-color: rgba(147, 51, 234, 0.2);
+}
+
+.statRevenue .statIcon {
+    color: var(--stat-revenue-color);
+}
+
+
+/* -------------------- TARJETA DE ÓRDENES (WHITE/DEFAULT) -------------------- */
+/*
+    Estos son los estilos originales de la tarjeta blanca.
+    Usaremos la clase 'dark-table' para anularlos según tu solicitud.
+*/
+.ordersCard {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    color: var(--text-white);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ordersCard .cardTitle {
+    color: var(white);
+}
+
+.ordersCard .ordersTable tbody td {
+    color: var(--text-white);
+}
+
+/* -------------------- MODIFICACIÓN PARA TARJETA OSCURA (DARK-TABLE) -------------------- */
+
+.ordersCard.dark-table {
+    /* Fondo de tarjeta morado oscuro (similar al sidebar) */
+    background-color: var(--bg-sidebar);
+    color: var(--text-light);
+    /* Texto principal CLARO */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.ordersCard.dark-table .cardTitle {
+    color: var(white);
+    /* Título de la tarjeta BLANCO */
+}
+
+/* Estilos de la tabla dentro de la tarjeta oscura */
+.ordersCard.dark-table .ordersTable th,
+.ordersCard.dark-table .ordersTable td {
+    /* Borde horizontal más sutil para fondo oscuro */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Encabezado de la tabla (th) */
+.ordersCard.dark-table .ordersTable thead tr {
+    /* Fondo de cabecera más oscuro que el fondo principal */
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--text-light);
+    /* Texto de encabezado BLANCO */
+    font-weight: 600;
+}
+
+/* Filas del cuerpo: Texto y color de fondo */
+.ordersCard.dark-table .ordersTable tbody td {
+    color: var(--text-light);
+    /* Texto de celdas BLANCO */
+}
+
+/* Filas del cuerpo: Estilo Zebra Invertido */
+.ordersCard.dark-table .ordersTable tbody tr:nth-child(even) {
+    /* Fondo más oscuro para la cebra */
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Hover */
+.ordersCard.dark-table .ordersTable tbody tr:hover {
+    /* Hover más brillante */
+    background-color: rgba(79, 70, 229, 0.15);
+}
+
+/* Elementos específicos que mantienen color */
+.ordersCard.dark-table .totalAmount {
+    color: var(--stat-revenue-color);
+    /* Morado de acento para el total */
+}
+
+.ordersCard.dark-table .orderId {
+    color: var(--accent-blue);
+    /* Azul de acento para el ID */
+}
+
+.ordersCard.dark-table .actionLink.view {
+    color: var(--accent-blue);
+}
+
+.ordersCard.dark-table .actionLink.print {
+    color: rgba(255, 255, 255, 0.7);
+    /* Gris claro para imprimir */
+}
+
+/* Footer de tabla oscuro */
+.ordersCard.dark-table .cardFooter {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.ordersCard.dark-table .paginationButton {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-light);
+}
+
+.ordersCard.dark-table .paginationButton:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Fin de la Modificación para Tarjeta Oscura */
+
+
+/* --- Grupo de Filtro y Botones --- */
+.filterGroup {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.dateInputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.dateInput {
+    padding: 10px 10px 10px 35px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.8em;
+    color: var(--text-dark);
+    width: 130px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* NOTA: Estos estilos se mantienen para el filtro, que se ve mejor en claro o se pueden adaptar a oscuro si es necesario */
+.ordersCard.dark-table .dateInput {
+    background-color: var(--bg-dark);
+    /* Más oscuro que el fondo de la tarjeta */
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-light);
+}
+
+.ordersCard.dark-table .dateIcon {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.dateInput[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.dateInput:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.dateIcon {
+    position: absolute;
+    left: 10px;
+    font-size: 1em;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+/* Estilo Base del Botón (se mantiene claro, ya que es un botón de acción) */
+.filterButton {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: var(--text-light);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.filterButton:hover {
+    background-color: var(--header-bg);
+    border-color: #d1d5db;
+}
+
+/* Estilo de Botón Primario (el de Filtrar) */
+.filterButton.primaryButton {
+    background-color: var(--accent-blue);
+    color: var(--text-light);
+    border-color: var(--accent-blue);
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+}
+
+.filterButton.primaryButton:hover {
+    background-color: var(--accent-blue-hover);
+    border-color: var(--accent-blue-hover);
+}
+
+.filterIcon {
+    font-size: 1.2em;
+    margin-right: 5px;
+}
+
+/* --- Estilos de la Tabla (Comunes) --- */
+.tableContainer {
+    overflow-x: auto;
+    flex-grow: 1;
+}
+
+.ordersTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85em;
+    min-width: 750px;
+}
+
+.ordersTable th,
+.ordersTable td {
+    padding: 15px 15px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* Bordes redondeados en la cabecera */
+.ordersTable thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.ordersTable thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+/* --- Estado (Badge) se mantiene igual --- */
+.statusBadge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.7em;
+    text-align: center;
+    letter-spacing: 0.5px;
+    min-width: 85px;
+}
+
+.statusBadge.completed {
+    background-color: var(--status-completed-bg);
+    color: var(--status-completed-text);
+}
+
+.statusBadge.pending {
+    background-color: var(--status-pending-bg);
+    color: var(--status-pending-text);
+}
+
+.statusBadge.cancelled {
+    background-color: var(--status-cancelled-bg);
+    color: var(--status-cancelled-text);
+}
+
+
+/* --- Acciones --- */
+.actions {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9em;
+}
+
+.actionLink {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    font-weight: 500;
+}
+
+.actionLink.view {
+    text-decoration: underline;
+}
+
+.actionLink.print {
+    text-decoration: none;
+}
+
+.actionLink:hover {
+    opacity: 0.8;
+}
+
+
+/* ============================================== */
+/* === MEDIA QUERIES PARA RESPONSIVIDAD === */
+/* ============================================== */
+
+@media (max-width: 1200px) {
+    .searchBar {
+        min-width: 200px;
+        margin: 0 15px;
+    }
+}
+
+@media (max-width: 1024px) {
+    body {
+        font-size: 15px;
+    }
+
+    .headerBar {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .searchBar {
+        order: 3;
+        width: 100%;
+        min-width: unset;
+        margin: 0;
+    }
+
+    .ordersCard {
+        padding: 20px;
+    }
+
+    .cardHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .filterGroup {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .sidebar {
+        width: 220px;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ordersTable th,
+    .ordersTable td {
+        padding: 12px 10px;
+    }
+}
+
+
+@media (max-width: 600px) {
+    .dashboardContainer {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .mainContent {
+        padding-right: 0;
+    }
+
+    .headerBar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 5px;
+        position: relative;
+        padding-top: 5px;
+    }
+
+    .pageHeader {
+        order: 1;
+    }
+
+    .searchBar {
+        order: 3;
+    }
+
+    .notificationIcons {
+        order: 2;
+        position: absolute;
+        top: 15px;
+        right: 10px;
+        margin-left: 0;
+    }
+
+    .title {
+        font-size: 1.8em;
+    }
+
+    .subtitle {
+        font-size: 0.8em;
+    }
+
+    .ordersCard {
+        padding: 15px;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .cardHeader {
+        gap: 10px;
+    }
+
+    .filterGroup {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dateInputWrapper,
+    .filterButton {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .ordersTable {
+        min-width: 550px;
+    }
+
+    .ordersTable th,
+    .ordersTable td {
+        padding: 10px 8px;
+        font-size: 0.75em;
+    }
+
+    .cardFooter {
+        font-size: 0.7em;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .paginationControls {
+        margin-top: 5px;
+    }
+}

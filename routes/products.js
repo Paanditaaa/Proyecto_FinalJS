@@ -29,17 +29,45 @@ router.delete("/:id", async (req, res, next) => {
     }
 });
 
-// PUT /api/products/:id - Actualizar un producto
+// PUT /api/products/:id - Actualizar un producto (Soporta StockMinimo y actualizaciones parciales)
 router.put("/:id", async (req, res, next) => {
     try {
-        const { Nombre, UnidadMedida } = req.body;
-        const query = "UPDATE producto SET Nombre = ?, UnidadMedida = ? WHERE IDProducto = ?";
-        const result = await db.query(query, [Nombre, UnidadMedida, req.params.id]);
+        const updates = req.body;
+        const productId = req.params.id;
+
+        // 1. Construir dinámicamente la consulta SET
+        const setClauses = [];
+        const values = [];
+
+        // Campos permitidos para la actualización
+        const allowedFields = ['Nombre', 'UnidadMedida', 'IDCategoria', 'StockMinimo'];
+
+        // Itera sobre los campos permitidos y construye la consulta
+        for (const field of allowedFields) {
+            if (updates.hasOwnProperty(field)) {
+                setClauses.push(`${field} = ?`);
+                values.push(updates[field]);
+            }
+        }
+
+        // Si no se envió ningún campo válido para actualizar, devuelve un error.
+        if (setClauses.length === 0) {
+            return res.status(400).json({ code: 400, message: "No se proporcionaron campos válidos para actualizar" });
+        }
+
+        // 2. Finaliza la construcción de la consulta
+        const query = `UPDATE producto SET ${setClauses.join(', ')} WHERE IDProducto = ?`;
+
+        // 3. Añade el ID del producto al final del array de valores
+        values.push(productId);
+
+        // 4. Ejecuta la consulta
+        const result = await db.query(query, values);
 
         if (result.affectedRows > 0) {
             return res.status(200).json({ code: 200, message: "Producto actualizado correctamente" });
         }
-        return res.status(404).json({ code: 404, message: "Producto no encontrado" });
+        return res.status(404).json({ code: 404, message: "Producto no encontrado o sin cambios" });
     } catch (error) {
         console.error("Error updating product:", error);
         return res.status(500).json({ code: 500, message: "Error al actualizar producto" });
