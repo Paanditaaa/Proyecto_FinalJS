@@ -1,6 +1,4 @@
-/* Estilos para el Modal de Edición y Agregar Producto */
-
-/* Override para asegurar visibilidad */
+/* 1. Modal Overlay: Centra el modal en la ventana */
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -13,22 +11,24 @@
     align-items: center;
     z-index: 1000;
     opacity: 1 !important;
-    /* Force visibility */
     pointer-events: auto !important;
-    /* Force interaction */
 }
 
-.modalContent {
+/* 2. Modal Content: Contenedor principal */
+.modalContent 
+{
     background-color: #2c2c3e;
-    /* Coincide con el tema oscuro */
     padding: 20px;
     border-radius: 10px;
-    width: 300px;
+    width: 700px; 
+    height: 600px;
     display: flex;
     flex-direction: column;
     gap: 15px;
     color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    align-items: center; 
+    justify-content: center;
 }
 
 .modalContent h2 {
@@ -37,10 +37,12 @@
 }
 
 .modalContent label {
+    align-items: center; 
     display: flex;
     flex-direction: column;
     gap: 5px;
     font-size: 14px;
+    width: auto; 
 }
 
 .modalContent input,
@@ -52,10 +54,30 @@
     color: white;
 }
 
+/* 4. Contenedor de Acciones: Centrado y con botones separados */
 .modalActions {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 20px;
+    width: auto; 
+    
     margin-top: 10px;
+    height: 60px;
+}
+
+/* Estilos específicos para elementos dentro del formulario */
+.mierdilla {
+    width: 80%; 
+    max-width: 400px;
+    font-size: 25px;
+}
+
+p {
+    font-size: 25px; 
+}
+
+#mierdilla {
+    font-size: 25px;
 }
 
 .modalActions button {
@@ -69,13 +91,11 @@
 
 .modalActions button:first-child {
     background-color: #ff4d4d;
-    /* Rojo para cancelar */
     color: white;
 }
 
 .modalActions button:last-child {
     background-color: #4caf50;
-    /* Verde para guardar */
     color: white;
 }
 

@@ -21,12 +21,13 @@ const ConfirmationMessage = ({ message }) => {
 // ----------------------------------------------------
 // --- Elementos del sidebar ---
 // ----------------------------------------------------
-const SidebarItem = ({ icon: Icon, label, isActive, path }) => {
+const SidebarItem = ({ icon: Icon, label, isActive, path, onClick }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        if (path) {
-            console.log(`Navegando a: ${path}`);
+        if (onClick) {
+            onClick();
+        } else if (path) {
             navigate(path);
         }
     };
@@ -35,7 +36,7 @@ const SidebarItem = ({ icon: Icon, label, isActive, path }) => {
         <div
             className={`sidebarItem ${isActive ? 'active' : ''}`}
             onClick={handleClick}
-            style={{ cursor: path ? 'pointer' : 'default' }}>
+            style={{ cursor: 'pointer' }}>
             <Icon className="sidebarIcon" />
             <span className="sidebarLabel">{label}</span>
         </div>
@@ -59,11 +60,8 @@ const SupplierForm = ({ onClose, onSave, editData }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Guardando proveedor:', formData);
         onSave(formData);
     };
-
-    console.log('🔴 MODAL RENDERIZADO - Debería ser visible');
 
     return (
         <div
@@ -249,14 +247,98 @@ const SupplierForm = ({ onClose, onSave, editData }) => {
 };
 
 // ----------------------------------------------------
+// --- Modal de Confirmación de Cierre de Sesión ---
+// ----------------------------------------------------
+const LogoutConfirmationModal = ({ onClose, onConfirm }) => {
+    return (
+        <div
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 10000
+            }}
+            onClick={onClose}
+        >
+            <div
+                style={{
+                    backgroundColor: '#2f254f',
+                    padding: '30px',
+                    borderRadius: '15px',
+                    width: '90%',
+                    maxWidth: '400px',
+                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+                    color: 'white',
+                    textAlign: 'center'
+                }}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <h3 style={{ margin: '0 0 15px 0', fontSize: '1.4em', fontWeight: 600 }}>
+                    Confirmación de Salida
+                </h3>
+                <p style={{ marginBottom: '30px', color: '#a0a0a0' }}>
+                    Estás a punto de salir de la aplicación.
+                </p>
+
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    gap: '15px'
+                }}>
+                    <button
+                        onClick={onClose}
+                        style={{
+                            backgroundColor: 'transparent',
+                            border: '1px solid #a0a0a0',
+                            color: '#a0a0a0',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            flex: 1,
+                            fontWeight: 600
+                        }}
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        style={{
+                            backgroundColor: '#ef4444',
+                            border: 'none',
+                            color: 'white',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            flex: 1,
+                            fontWeight: 600
+                        }}
+                    >
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
+// ----------------------------------------------------
 // --- Componente Principal (Dashboard Layout) ---
 // ----------------------------------------------------
 function Proveedores() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // Nuevo estado
     const [editingProveedor, setEditingProveedor] = useState(null);
     const [confirmation, setConfirmation] = useState('');
     const [proveedores, setProveedores] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     // Cargar proveedores al montar el componente
     useEffect(() => {
@@ -271,7 +353,6 @@ function Proveedores() {
                 setProveedores(data.message);
             }
         } catch (error) {
-            console.error('Error al cargar proveedores:', error);
             showConfirmation('❌ Error al cargar proveedores');
         } finally {
             setLoading(false);
@@ -284,14 +365,11 @@ function Proveedores() {
     };
 
     const handleNewSupplier = () => {
-        console.log('🟡 Botón Nuevo Proveedor CLICKEADO');
         setEditingProveedor(null);
         setIsModalOpen(true);
     };
 
     const handleSaveNewSupplier = async (newSupplierData) => {
-        console.log('🟢 Guardando nuevo proveedor:', newSupplierData);
-
         try {
             if (editingProveedor) {
                 // Actualizar proveedor existente
@@ -331,7 +409,6 @@ function Proveedores() {
             setIsModalOpen(false);
             setEditingProveedor(null);
         } catch (error) {
-            console.error('Error al guardar proveedor:', error);
             showConfirmation('❌ Error al guardar proveedor');
         }
     };
@@ -354,13 +431,21 @@ function Proveedores() {
                     fetchProveedores();
                 }
             } catch (error) {
-                console.error('Error al eliminar proveedor:', error);
                 showConfirmation('❌ Error al eliminar proveedor');
             }
         }
     };
 
-    console.log('🟠 Estado del modal:', isModalOpen);
+    // Funciones para el Modal de Cerrar Sesión
+    const handleLogoutClick = () => {
+        setIsLogoutModalOpen(true);
+    };
+
+    const handleConfirmLogout = () => {
+        // Lógica de cierre de sesión (ej: limpiar tokens, etc.)
+        setIsLogoutModalOpen(false);
+        navigate('/'); // Redirigir a la página de inicio de sesión
+    };
 
     if (loading) {
         return <div style={{ color: 'white', padding: '20px' }}>Cargando...</div>;
@@ -382,7 +467,11 @@ function Proveedores() {
                     <SidebarItem icon={FaBox} label="Productos" path="/dashboard/productos" />
                     <SidebarItem icon={FaTruck} label="Proveedores" isActive={true} path="/dashboard/proveedores" />
                     <SidebarItem icon={FaCog} label="Configuracion" path="/dashboard/configuracion" />
-                    <SidebarItem icon={BsFillDoorOpenFill} label="Cerrar sesion" />
+                    <SidebarItem
+                        icon={BsFillDoorOpenFill}
+                        label="Cerrar sesion"
+                        onClick={handleLogoutClick} // Cambiado a onClick
+                    />
                 </div>
             </div>
 
@@ -443,16 +532,23 @@ function Proveedores() {
                 </div>
             </div>
 
-            {/* MODAL - Renderizado condicional */}
+            {/* MODAL - Formulario de Proveedor */}
             {isModalOpen && (
                 <SupplierForm
                     onClose={() => {
-                        console.log('🔵 Cerrando modal');
                         setIsModalOpen(false);
                         setEditingProveedor(null);
                     }}
                     onSave={handleSaveNewSupplier}
                     editData={editingProveedor}
+                />
+            )}
+
+            {/* MODAL - Confirmación de Cierre de Sesión */}
+            {isLogoutModalOpen && (
+                <LogoutConfirmationModal
+                    onClose={() => setIsLogoutModalOpen(false)}
+                    onConfirm={handleConfirmLogout}
                 />
             )}
         </div>

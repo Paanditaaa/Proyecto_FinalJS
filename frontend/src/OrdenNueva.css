@@ -320,7 +320,8 @@ body {
     margin: 10px 0;
 }
 
-.processOrderButton {
+/* 🚨 ELIMINAMOS .processOrderButton y usamos .primaryActionButton */
+/* .processOrderButton {
     background-color: var(--accent-blue);
     color: var(--text-light);
     border: none;
@@ -334,7 +335,8 @@ body {
 
 .processOrderButton:hover {
     background-color: #3b33b7;
-}
+} */
+
 
 .removeItemButton {
     background: none;
@@ -360,6 +362,61 @@ body {
     padding: 5px 0;
 }
 
+/* ---------------------------------------------------- */
+/* --- NUEVOS ESTILOS PARA QUE SE VEA BONITO --- */
+/* ---------------------------------------------------- */
+
+/* 1. Botón Principal (Procesar Orden) */
+.primaryActionButton {
+    /* Estilo tomado del active sidebar, pero adaptado a un botón sólido */
+    background-color: var(--accent-blue); /* Color principal */
+    color: var(--text-light);
+    border: none;
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 15px 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.primaryActionButton:hover:not(:disabled) {
+    background-color: #3b33b7; /* Un tono un poco más oscuro */
+}
+
+.primaryActionButton:disabled {
+    background-color: #ccc; /* Gris al estar deshabilitado */
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* 2. Botón de Cerrar Sesión (Usaremos el estilo activo) */
+/* NOTA: Para que esto funcione, en el código JSX debes asegurarte de añadir 
+         la clase 'logout' al SidebarItem de Cerrar Sesión. */
+/* Ejemplo: <SidebarItem icon={BsFillDoorOpenFill} label="Cerrar sesion" showModal={showModal} className="logout" /> */
+.sidebarItem.logout {
+    /* Mantiene el estilo activo */
+    background: linear-gradient(90deg, #3c3066 0%, transparent 100%);
+    color: var(--text-light);
+    border-left: 5px solid var(--accent-blue);
+    /* Añade espacio para separarlo de los otros menús */
+    margin-top: 30px; 
+    /* El hover puede ser un poco más sutil */
+    opacity: 0.9; 
+    transition: opacity 0.3s;
+}
+
+.sidebarItem.logout:hover {
+    opacity: 1;
+    color: var(--text-light); /* Asegura que el color se mantenga */
+}
+
+
+/* --- Media Queries (Mantenidas) --- */
 
 /* --- Tablet y Pantallas Medianas (Máx. 1200px) --- */
 @media (max-width: 1200px) {

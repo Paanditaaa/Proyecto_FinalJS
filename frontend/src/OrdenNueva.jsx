@@ -2,18 +2,133 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './OrdenNueva.css';
-import './ProductosModal.css';
 import { FaHome, FaBox, FaTruck, FaCog, FaTimes } from 'react-icons/fa';
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { MdOutlineHistory } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import UserAvatar from './components/UserAvatar';
 import dayjs from 'dayjs';
-import 'dayjs/locale/es';
+
+// NOTA IMPORTANTE: Para que el botón se vea "bonito" como en Configuración, 
+// debes asegurarte de que tu archivo CSS (OrdenNueva.css) contenga la definición
+// de la clase '.primaryActionButton' o que la clase '.sidebarItem.active' tenga
+// los estilos deseados. A continuación, un ejemplo de CSS que podrías usar:
+/*
+.primaryActionButton {
+    background-color: #6366f1; // Color principal (ajusta a tu color de acento)
+    color: white;
+    border: none;
+    border-radius: 8px; 
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+}
+
+.primaryActionButton:hover:not(:disabled) {
+    background-color: #4f46e5;
+}
+
+.primaryActionButton:disabled {
+    background-color: #ccc; 
+    cursor: not-allowed;
+    box-shadow: none;
+}
+*/
+
+// -------------------------------------------------------------
+// Componente de Modal Genérico
+// -------------------------------------------------------------
+const CustomModal = ({ isOpen, content, onClose, navigate }) => {
+    if (!isOpen) return null;
+
+    const { title, message, type, onConfirm, showInput, inputPlaceholder } = content;
+    const [inputValue, setInputValue] = useState('');
+
+    const handleAction = () => {
+        if (onConfirm) {
+            // Ejecuta la función de confirmación (incluyendo la lógica de logout)
+            onConfirm(inputValue, navigate); 
+        }
+        onClose();
+    };
+
+    return (
+        <div className="modalOverlay">
+            <div className="modalContent" style={{ maxWidth: '400px', textAlign: 'center' }}>
+                <h2 style={{ borderBottom: '1px solid #eee', paddingBottom: '10px' }}>{title}</h2>
+                <p>{message}</p>
+                {showInput && (
+                    <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        placeholder={inputPlaceholder}
+                        className='mierdilla'
+                        style={{ marginTop: '15px', padding: '8px', width: '90%' }}
+                    />
+                )}
+                <div className="modalActions" style={{ marginTop: '20px' }}>
+                    <button onClick={onClose} style={{ background: '#ccc', color: '#333' }}>
+                        {type === 'alert' ? 'Aceptar' : 'Cancelar'}
+                    </button>
+                    {type === 'confirm' && (
+                        <button onClick={handleAction} style={{ background: '#ff4d4f', color: 'white', marginLeft: '10px' }}>
+                            Aceptar
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 
 // -------------------------------------------------------------
 // Componentes de la Interfaz
 // -------------------------------------------------------------
+
+/**
+ * Componente para un elemento del menú lateral con navegación y soporte para Modal.
+ */
+const SidebarItem = ({ icon: Icon, label, isActive, path, showModal }) => {
+    const navigate = useNavigate();
+
+    const handleLogoutConfirm = (inputValue, nav) => {
+        localStorage.removeItem('token');
+        console.log("Sesión cerrada");
+        nav('/'); // Redirigir al inicio de sesión
+    };
+
+    const handleClick = () => {
+        if (path) {
+            navigate(path);
+        } else if (label === "Cerrar sesion" && showModal) {
+            // Llama a showModal para la confirmación de logout
+            showModal(
+                'Confirmación de Salida',
+                '¿Estás seguro de que quieres cerrar la sesión actual?',
+                'confirm',
+                handleLogoutConfirm // Pasa la función de confirmación
+            );
+        }
+    };
+
+    return (
+        <div
+            className={`sidebarItem ${isActive ? 'active' : ''}`}
+            onClick={handleClick}
+            style={{ cursor: path || label === "Cerrar sesion" ? 'pointer' : 'default' }}
+        >
+            <Icon className="sidebarIcon" />
+            <span className="sidebarLabel">{label}</span>
+        </div>
+    );
+};
+
 
 /**
  * Representa una tarjeta de producto disponible.
@@ -38,15 +153,14 @@ const ProductCard = ({ product, onAdd, onDelete }) => (
                 title="Eliminar platillo"
                 style={{
                     position: 'absolute',
-                    top: '5px',
-                    right: '5px',
+                    top: '10px',
+                    right: '10px',
                     background: '#ff4d4f',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '24px',
-                    height: '24px',
+                    borderRadius: '7%',
+                    width: '35px',
+                    height: '35px',
                     cursor: 'pointer',
-                    fontSize: '14px',
+                    fontSize: '20px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -66,19 +180,7 @@ const AvailableProducts = ({ products, onProductAdd, onProductDelete, onAddNewDi
         <div className="availableProducts">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h2 className="sectionTitle">Productos Disponibles</h2>
-                <button className="addProductButton" onClick={onAddNewDish} style={{
-                    padding: '10px 20px',
-                    background: '#6366f1',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    fontSize: '14px',
-                    fontWeight: '600'
-                }}>
+                <button className="addProductButton" onClick={onAddNewDish} >
                     <IoMdAdd size={20} /> Agregar Platillo
                 </button>
             </div>
@@ -154,7 +256,18 @@ const OrderSummary = ({ orderItems, subtotal, taxRate = 0.16, onProcessOrder, on
                 </div>
             </div>
 
-            <button className="processOrderButton" disabled={orderItems.length === 0} onClick={onProcessOrder}>
+            {/* BOTÓN MODIFICADO para que se vea igual de bonito */}
+            <button 
+                className="primaryActionButton" /* Nueva clase para estilo destacado */
+                disabled={orderItems.length === 0} 
+                onClick={onProcessOrder}
+                style={{ 
+                    width: '100%', 
+                    padding: '15px 0', 
+                    marginTop: '20px', 
+                    fontSize: '1.1em',
+                }}
+            >
                 Procesar Orden
             </button>
         </div>
@@ -218,23 +331,27 @@ const AddDishModal = ({ isOpen, onClose, onSave, availableIngredients }) => {
                 <h2>Agregar Nuevo Platillo</h2>
 
                 <label>
-                    Nombre del Platillo:
+                    <p>Nombre del Platillo:</p>
                     <input
                         type="text"
                         value={dishName}
                         onChange={(e) => setDishName(e.target.value)}
                         placeholder="Ej: Hamburguesa Doble"
+                        className='mierdilla'
+                        style={{ marginTop: '15px', padding: '8px', width: '90%' }}
                     />
                 </label>
 
                 <label>
-                    Precio:
+                    <p>Precio:</p>
                     <input
                         type="number"
                         step="0.01"
                         value={dishPrice}
                         onChange={(e) => setDishPrice(e.target.value)}
                         placeholder="Ej: 150.00"
+                        className='mierdilla'
+                        style={{ marginTop: '15px', padding: '8px', width: '90%' }}
                     />
                 </label>
 
@@ -246,7 +363,7 @@ const AddDishModal = ({ isOpen, onClose, onSave, availableIngredients }) => {
                             onChange={(e) => handleIngredientChange(index, 'IDProducto', e.target.value)}
                             style={{ flex: 2 }}
                         >
-                            <option value="">Seleccionar Ingrediente</option>
+                            <option value="" className='mierdilla' id='mierdilla'>Seleccionar Ingrediente</option>
                             {availableIngredients.map(ing => (
                                 <option key={ing.IDProducto} value={ing.IDProducto}>
                                     {ing.Nombre}
@@ -260,6 +377,7 @@ const AddDishModal = ({ isOpen, onClose, onSave, availableIngredients }) => {
                             onChange={(e) => handleIngredientChange(index, 'Cantidad', e.target.value)}
                             placeholder="Cantidad"
                             style={{ flex: 1 }}
+                            className='mierdilla'
                         />
                         <button onClick={() => handleRemoveIngredient(index)} style={{ padding: '5px 10px' }}>
                             🗑️
@@ -378,7 +496,19 @@ const NewOrderView = () => {
     // Lógica para eliminar un producto de la orden
     const handleProductRemove = (dishId) => {
         setOrderItems(prevItems => {
-            return prevItems.filter(item => item.IDPlatillo !== dishId);
+            // Decrementa si la cantidad es > 1, si no, lo elimina
+            const existingItem = prevItems.find(item => item.IDPlatillo === dishId);
+
+            if (existingItem && existingItem.quantity > 1) {
+                return prevItems.map(item =>
+                    item.IDPlatillo === dishId
+                        ? { ...item, quantity: item.quantity - 1 }
+                        : item
+                );
+            } else {
+                // Si la cantidad es 1 o menos, o no se encontró, lo elimina por completo de la lista
+                return prevItems.filter(item => item.IDPlatillo !== dishId);
+            }
         });
     };
 
@@ -450,9 +580,12 @@ const NewOrderView = () => {
 
 // --- Componente Principal (OrdenNueva) ---
 function OrdenNueva() {
-    // Se mantienen los hooks de tiempo y navegación
     const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState(dayjs());
+    
+    // ESTADOS DEL MODAL
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalContent, setModalContent] = useState({});
 
     useEffect(() => {
         const timerId = setInterval(() => {
@@ -460,6 +593,18 @@ function OrdenNueva() {
         }, 1000);
         return () => clearInterval(timerId);
     }, []);
+
+    // FUNCIÓN SHOW MODAL
+    const showModal = (title, message, type = 'alert', onConfirm = null, showInput = false, inputPlaceholder = '') => {
+        setModalContent({ title, message, type, onConfirm, showInput, inputPlaceholder });
+        setIsModalOpen(true);
+    };
+    
+    // FUNCIÓN DE CIERRE DE MODAL
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setModalContent({});
+    };
 
     return (
         <div className="dashboardContainer">
@@ -471,13 +616,14 @@ function OrdenNueva() {
                     <p className="loremText">Buen dia</p>
                 </div>
                 <div className="menu">
-                    <SidebarItem icon={FaHome} label="INICIO" path="/dashboard" />
-                    <SidebarItem icon={IoMdAdd} label="Orden nueva" isActive={true} path="/dashboard/orden-nueva" />
-                    <SidebarItem icon={MdOutlineHistory} label="Ordenes pasadas" path="/dashboard/ordenes-pasadas" />
-                    <SidebarItem icon={FaBox} label="Productos" path="/dashboard/productos" />
-                    <SidebarItem icon={FaTruck} label="Proveedores" path="/dashboard/proveedores" />
-                    <SidebarItem icon={FaCog} label="Configuracion" path="/dashboard/configuracion" />
-                    <SidebarItem icon={BsFillDoorOpenFill} label="Cerrar sesion" />
+                    <SidebarItem icon={FaHome} label="INICIO" path="/dashboard" showModal={showModal} />
+                    <SidebarItem icon={IoMdAdd} label="Orden nueva" isActive={true} path="/dashboard/orden-nueva" showModal={showModal} />
+                    <SidebarItem icon={MdOutlineHistory} label="Ordenes pasadas" path="/dashboard/ordenes-pasadas" showModal={showModal} />
+                    <SidebarItem icon={FaBox} label="Productos" path="/dashboard/productos" showModal={showModal} />
+                    <SidebarItem icon={FaTruck} label="Proveedores" path="/dashboard/proveedores" showModal={showModal} />
+                    <SidebarItem icon={FaCog} label="Configuracion" path="/dashboard/configuracion" showModal={showModal} />
+                    {/* Elemento de cerrar sesión con la función showModal */}
+                    <SidebarItem icon={BsFillDoorOpenFill} label="Cerrar sesion" showModal={showModal} />
                 </div>
             </div>
 
@@ -490,34 +636,16 @@ function OrdenNueva() {
                 {/* Muestra la vista de órdenes */}
                 <NewOrderView />
             </div>
+            
+            {/* -------------------- MODAL GENÉRICO -------------------- */}
+            <CustomModal
+                isOpen={isModalOpen}
+                content={modalContent}
+                onClose={handleCloseModal}
+                navigate={navigate} // Pasamos navigate al modal
+            />
         </div>
     );
 }
-
-// --- Componentes Reutilizables (Mantenidos) ---
-
-/**
- * Componente para un elemento del menú lateral con navegación.
- */
-const SidebarItem = ({ icon: Icon, label, isActive, path }) => {
-    const navigate = useNavigate();
-
-    const handleClick = () => {
-        if (path) {
-            navigate(path);
-        }
-    };
-
-    return (
-        <div
-            className={`sidebarItem ${isActive ? 'active' : ''}`}
-            onClick={handleClick}
-            style={{ cursor: path ? 'pointer' : 'default' }}
-        >
-            <Icon className="sidebarIcon" />
-            <span className="sidebarLabel">{label}</span>
-        </div>
-    );
-};
 
 export default OrdenNueva;

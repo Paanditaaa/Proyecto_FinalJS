@@ -1,446 +1,452 @@
-                   /* --- Variables de Color --- */
-                    :root {
-                        --bg-dark: #1e153e;
-                        --bg-card: #2f254f;
-                        --accent-blue: #4f46e5;
-                        --accent-purple: #9333ea;
-                        --text-light: #ffffff;
-                        --text-muted: #a0a0a0;
-                        --color-success: #10b981; 
-                        --color-danger: #ef4444; 
-                        --color-warning: #f59e0b; 
-                        --color-info: #6366f1;
-                        --clock-size: 400px;
-                        --clock-color: #3c3066;
-                    }
+/* --- Variables de Color --- */
+:root {
+    --bg-dark: #1e153e;
+    --bg-card: #2f254f;
+    --accent-blue: #4f46e5;
+    --accent-purple: #9333ea;
+    --text-light: #ffffff;
+    --text-muted: #a0a0a0;
+    --color-success: #10b981; 
+    --color-danger: #ef4444; 
+    --color-warning: #f59e0b; 
+    --color-info: #6366f1;
+    --color-bugs: #EFC3CA;
+    --clock-color: #3c3066; /* Usado para bordes y fondos ligeros */
+}
 
-                    /* Asegura que el contenedor raíz ocupe todo el espacio y elimina el scroll */
-                    html, body, #root, .App {
-                        height: 100%;
-                        margin: 0;
-                        padding: 0;
-                        box-sizing: border-box;
-                    }
+/* Asegura que el contenedor raíz ocupe todo el espacio y elimina el scroll */
+html, body, #root, .App {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-                    body {
-                        font-size: 22px;
-                        overflow: hidden;
-                        font-family: 'Inter', sans-serif;
-                    }
+body {
+    font-size: 22px;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
 
-                    /* ---------------------------------------------------- */
-                    /* --- Layout Principal y Sidebar (BASE) --- */
-                    /* ---------------------------------------------------- */
+/* ---------------------------------------------------- */
+/* ## Layout Principal y Sidebar */
+/* ---------------------------------------------------- */
 
-                    .dashboardContainer {
-                        display: flex;
-                        background-color: var(--bg-dark);
-                        /* Altura ajustada a la ventana */
-                        height: calc(100vh - 40px);
-                        padding: 20px;
-                        gap: 30px;
-                        color: var(--text-light);
-                        overflow: hidden;
-                    }
+.dashboardContainer {
+    display: flex;
+    background-color: var(--bg-dark);
+    /* Altura ajustada a la ventana */
+    height: calc(100vh - 40px);
+    padding: 20px;
+    gap: 30px;
+    color: var(--text-light);
+    overflow: hidden;
+}
 
-                    /* -------------------- SIDEBAR -------------------- */
-                    .sidebar {
-                        width: 300px;
-                        background-color: var(--bg-card);
-                        border-radius: 18px;
-                        padding: 25px 0;
-                        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
-                        flex-shrink: 0;
-                        height: 100%;
-                    }
+/* --- SIDEBAR --- */
+.sidebar {
+    width: 300px;
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 25px 0;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+    height: 100%;
+}
 
-                    .profileSection {
-                        text-align: center;
-                        padding: 15px 30px 35px;
-                        border-bottom: 2px solid #3c3066;
-                    }
+.profileSection {
+    text-align: center;
+    padding: 15px 30px 35px;
+    border-bottom: 2px solid #3c3066;
+}
 
-                    .avatar {
-                        width: 80px;
-                        height: 80px;
-                        background-color: var(--accent-blue);
-                        border-radius: 50%;
-                        margin: 0 auto 15px;
-                        border: 4px solid var(--accent-purple);
-                    }
+.avatar {
+    width: 80px;
+    height: 80px;
+    background-color: var(--accent-blue);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    border: 4px solid var(--accent-purple);
+}
 
-                    .accountTitle {
-                        font-size: 40px;
-                        font-weight: bold;
-                    }
+.accountTitle {
+    font-size: 40px;
+    font-weight: bold;
+}
 
-                    .loremText {
-                        font-size: 30px;
-                    }
+.loremText {
+    font-size: 30px;
+}
 
-                    .menu {
-                        padding: 10px 0;
-                    }
+.menu {
+    padding: 10px 0;
+}
 
-                    .sidebarItem {
-                        display: flex;
-                        align-items: center;
-                        padding: 15px 35px;
-                        margin: 8px 0;
-                        cursor: pointer;
-                        color: var(--text-muted);
-                        transition: background-color 0.3s, color 0.3s;
-                    }
+.sidebarItem {
+    display: flex;
+    align-items: center;
+    padding: 15px 35px;
+    margin: 8px 0;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: background-color 0.3s, color 0.3s;
+}
 
-                    .sidebarItem:hover {
-                        color: var(--text-light);
-                    }
+.sidebarItem:hover {
+    color: var(--text-light);
+}
 
-                    .sidebarItem.active {
-                        background: linear-gradient(90deg, #3c3066 0%, transparent 100%);
-                        color: var(--text-light);
-                        border-left: 5px solid var(--accent-blue);
-                    }
+.sidebarItem.active {
+    background: linear-gradient(90deg, #3c3066 0%, transparent 100%);
+    color: var(--text-light);
+    border-left: 5px solid var(--accent-blue);
+}
 
-                    .sidebarIcon {
-                        margin-right: 18px;
-                        font-size: 1.4em;
-                    }
+.sidebarIcon {
+    margin-right: 18px;
+    font-size: 1.4em;
+}
 
-                    .sidebarLabel {
-                        font-size: 1em;
-                        font-weight: 500;
-                    }
+.sidebarLabel {
+    font-size: 1em;
+    font-weight: 500;
+}
 
-                    /* ---------------------------------------------------- */
-                    /* --- Contenido Principal y Header (BASE) --- */
-                    /* ---------------------------------------------------- */
+/* ---------------------------------------------------- */
+/* ## Contenido Principal y Configuración */
+/* ---------------------------------------------------- */
 
-                    .mainContent {
-                        flex-grow: 1;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 30px;
-                        height: 100%;
-                        /* Permitir scroll en el contenido principal si es necesario */
-                        overflow-y: auto;
-                        padding-right: 5px; /* Pequeño padding para barra de scroll */
-                    }
+.mainContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    height: 100%;
+    /* Permitir scroll en el contenido principal */
+    overflow-y: auto;
+    padding-right: 5px; 
+}
 
-                    .headerBar {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        padding: 10px 0;
-                        gap: 30px;
-                        flex-shrink: 0;
-                    }
+.headerBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    gap: 30px;
+    flex-shrink: 0;
+}
 
-                    .title {
-                        font-size: 2em;
-                        font-weight: 600;
-                        color: var(--text-light);
-                    }
+.title {
+    font-size: 2em;
+    font-weight: 600;
+    color: var(--text-light);
+}
 
-                    /* ---------------------------------------------------- */
-                    /* --- VISTA ESPECÍFICA: CONFIGURACIÓN --- */
-                    /* ---------------------------------------------------- */
+.configGrid {
+    display: grid;
+    /* Grid de dos columnas que se ajustan automáticamente */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    padding-bottom: 100px; /* Espacio para botones inferiores */
+}
 
-                    .configGrid {
-                        display: grid;
-                        /* Grid de dos columnas que se ajustan automáticamente */
-                        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-                        gap: 30px;
-                        padding-bottom: 100px; /* Espacio para botones inferiores */
-                    }
+/* Estilo general para todas las tarjetas de configuración */
+.configCard {
+    background-color: var(--bg-card);
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
 
-                    /* Estilo general para todas las tarjetas de configuración */
-                    .configCard {
-                        background-color: var(--bg-card);
-                        border-radius: 18px;
-                        padding: 30px;
-                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-                    }
+.cardHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--clock-color);
+}
 
-                    .cardHeader {
-                        display: flex;
-                        align-items: center;
-                        margin-bottom: 25px;
-                        padding-bottom: 10px;
-                        border-bottom: 1px solid var(--clock-color);
-                    }
+.cardHeader svg {
+    font-size: 1.5em;
+    margin-right: 15px;
+}
 
-                    .cardHeader svg {
-                        font-size: 1.5em;
-                        margin-right: 15px;
-                    }
+/* Colores para Iconos y Títulos de Tarjeta */
+.general svg, .general h2 { color: var(--color-info); }
+.database svg, .database h2 { color: var(--color-success); }
+.email svg, .email h2 { color: var(--color-warning); }
+.security svg, .security h2 { color: var(--color-danger); }
+.bugs svg, .bugs h2 { color: var(--color-bugs); }
 
-                    /* Colores para Iconos y Títulos de Tarjeta */
-                    .general svg, .general h2 { color: var(--color-info); }
-                    .database svg, .database h2 { color: var(--color-success); }
-                    .email svg, .email h2 { color: var(--color-warning); }
-                    .security svg, .security h2 { color: var(--color-danger); }
 
-                    .cardTitle {
-                        font-size: 1.2em;
-                        font-weight: 600;
-                        margin: 0;
-                    }
+.cardTitle {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin: 0;
+}
 
-                    /* --- FORMULARIO Y ENTRADAS --- */
-                    .configFormGroup {
-                        margin-bottom: 20px;
-                    }
+/* --- FORMULARIO Y ENTRADAS --- */
+.configFormGroup {
+    margin-bottom: 20px;
+}
 
-                    .configLabel {
-                        display: block;
-                        font-size: 0.8em;
-                        color: var(--text-muted);
-                        margin-bottom: 5px;
-                    }
+.configLabel {
+    display: block;
+    font-size: 0.8em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
 
-                    .configInput, .configSelect {
-                        width: 100%;
-                        padding: 10px 15px;
-                        border: 1px solid var(--clock-color);
-                        border-radius: 8px;
-                        background-color: #3c3066; /* Un tono más claro que la tarjeta */
-                        color: var(--text-light);
-                        font-size: 0.9em;
-                        box-sizing: border-box;
-                        transition: border-color 0.2s;
-                    }
-                    
-                    /* Deshabilitar inputs deshabilitados */
-                    .configInput:disabled {
-                        opacity: 0.6;
-                        cursor: not-allowed;
-                    }
+.configInput, .configSelect {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--clock-color);
+    border-radius: 8px;
+    background-color: #3c3066; /* Un tono más claro que la tarjeta */
+    color: var(--text-light);
+    font-size: 0.9em;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
 
-                    .configInput:focus, .configSelect:focus {
-                        outline: none;
-                        border-color: var(--accent-blue);
-                    }
+/* Estilo para el campo de texto (textarea) */
+textarea.configInput {
+    min-height: 120px !important; /* Altura más grande para el textarea */
+    padding: 15px; /* Más padding para el texto multilinea */
+    resize: vertical; /* Permitir redimensionar solo verticalmente */
+}
 
-                    .inputGroup {
-                        display: flex;
-                        gap: 15px;
-                    }
+/* Deshabilitar inputs deshabilitados */
+.configInput:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 
-                    .inputGroup .configFormGroup {
-                        flex: 1;
-                    }
+.configInput:focus, .configSelect:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+}
 
-                    /* --- BOTONES DE ACCIÓN --- */
-                    .actionButton {
-                        padding: 12px 20px;
-                        border-radius: 8px;
-                        font-weight: bold;
-                        cursor: pointer;
-                        transition: background-color 0.2s, opacity 0.2s;
-                        border: none;
-                        font-size: 0.9em;
-                        /* AÑADIDO: Para centrar el texto y el ícono dentro del botón */
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
+.inputGroup {
+    display: flex;
+    gap: 15px;
+}
 
-                    .connectButton {
-                        background-color: var(--color-success);
-                        color: var(--text-light);
-                        width: 100%;
-                        margin-top: 10px;
-                    }
+.inputGroup .configFormGroup {
+    flex: 1;
+}
 
-                    .connectButton:hover {
-                        background-color: #059669; /* Tono más oscuro de verde */
-                    }
+/* --- BOTONES DE ACCIÓN --- */
+.actionButton {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+    border: none;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-                    /* --- SWITCHES Y ESTADO --- */
+.connectButton {
+    background-color: var(--color-success);
+    color: var(--text-light);
+    width: 100%;
+    margin-top: 10px;
+}
 
-                    .configSwitchGroup {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 15px;
-                        padding: 5px 0;
-                    }
+.connectButton:hover {
+    background-color: #059669; /* Tono más oscuro de verde */
+}
 
-                    .switchLabel {
-                        font-size: 0.9em;
-                        color: var(--text-light);
-                    }
+/* --- SWITCHES Y ESTADO --- */
 
-                    .switchSubtext {
-                        display: block;
-                        font-size: 0.7em;
-                        color: var(--text-muted);
-                        font-weight: normal;
-                        margin-top: 2px;
-                    }
+.configSwitchGroup {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 5px 0;
+}
 
-                    /* Estilos del Switch de Toggle (Añadido) */
-                    .switch {
-                        position: relative;
-                        display: inline-block;
-                        width: 60px;
-                        height: 34px;
-                    }
+.switchLabel {
+    font-size: 0.9em;
+    color: var(--text-light);
+}
 
-                    .switch input {
-                        opacity: 0;
-                        width: 0;
-                        height: 0;
-                    }
+.switchSubtext {
+    display: block;
+    font-size: 0.7em;
+    color: var(--text-muted);
+    font-weight: normal;
+    margin-top: 2px;
+}
 
-                    .slider {
-                        position: absolute;
-                        cursor: pointer;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background-color: #555; /* Gris oscuro cuando está apagado */
-                        transition: .4s;
-                        border-radius: 34px; /* Redondeado */
-                    }
+/* Estilos del Switch de Toggle */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
 
-                    .slider:before {
-                        position: absolute;
-                        content: "";
-                        height: 26px;
-                        width: 26px;
-                        left: 4px;
-                        bottom: 4px;
-                        background-color: white;
-                        transition: .4s;
-                        border-radius: 50%; /* Redondeado */
-                    }
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
 
-                    input:checked + .slider {
-                        background-color: var(--accent-blue);
-                    }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #555; /* Gris oscuro cuando está apagado */
+    transition: .4s;
+    border-radius: 34px; 
+}
 
-                    input:focus + .slider {
-                        box-shadow: 0 0 1px var(--accent-blue);
-                    }
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%; 
+}
 
-                    input:checked + .slider:before {
-                        transform: translateX(26px);
-                    }
+input:checked + .slider {
+    background-color: var(--accent-blue);
+}
 
-                    /* Estilo para el mensaje de conexión (como el verde "Conexión establecida") */
-                    .connectionStatus {
-                        padding: 8px;
-                        border-radius: 6px;
-                        text-align: center;
-                        font-size: 0.8em;
-                        font-weight: 600;
-                        margin-top: 15px;
-                    }
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--accent-blue);
+}
 
-                    .statusSuccess {
-                        background-color: rgba(16, 185, 129, 0.2); /* Verde claro transparente */
-                        color: var(--color-success);
-                    }
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
 
-                    /* Estilo para la conexión fallida (danger) */
-                    .statusDanger {
-                        background-color: rgba(239, 68, 68, 0.2); 
-                        color: var(--color-danger);
-                    }
+/* Estilo para el mensaje de conexión */
+.connectionStatus {
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-top: 15px;
+}
 
-                    /* Botones Fijos Inferiores (Guardar, Exportar, Restablecer) */
-                    .footerActions {
-                        position: fixed;
-                        bottom: 0;
-                        left: 340px;
-                        right: 20px;
-                        padding: 15px 30px;
-                        background-color: var(--bg-dark);
-                        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        border-top-left-radius: 18px;
-                        border-top-right-radius: 18px;
-                        z-index: 10;
-                    }
+.statusSuccess {
+    background-color: rgba(16, 185, 129, 0.2); 
+    color: var(--color-success);
+}
 
-                    .saveButton {
-                        background-color: var(--accent-blue);
-                        color: var(--text-light);
-                    }
+.statusDanger {
+    background-color: rgba(239, 68, 68, 0.2); 
+    color: var(--color-danger);
+}
 
-                    .saveButton:hover {
-                        background-color: #3b33b7;
-                    }
+/* ---------------------------------------------------- */
+/* ## Acciones Fijas al Pie (Footer) */
+/* ---------------------------------------------------- */
 
-                    .resetButton {
-                        background-color: #555;
-                        color: var(--text-light);
-                        margin-right: 10px;
-                    }
+.footerActions {
+    position: fixed;
+    bottom: 0;
+    left: 340px; /* Ajuste para el ancho del sidebar */
+    right: 20px;
+    padding: 15px 30px;
+    background-color: var(--bg-dark);
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    z-index: 10;
+}
 
-                    .resetButton:hover {
-                        background-color: #444;
-                    }
+.saveButton {
+    background-color: var(--accent-blue);
+    color: var(--text-light);
+}
 
-                    .exportButton {
-                        background-color: #777;
-                        color: var(--text-light);
-                    }
+.saveButton:hover {
+    background-color: #3b33b7;
+}
 
-                    .exportButton:hover {
-                        background-color: #666;
-                    }
+.resetButton {
+    background-color: #555;
+    color: var(--text-light);
+    margin-right: 10px;
+}
 
-                    .leftFooterButtons {
-                        display: flex;
-                        gap: 15px;
-                    }
+.resetButton:hover {
+    background-color: #444;
+}
 
-                    /* ---------------------------------------------------- */
-                    /* --- Media Queries (Responsividad) --- */
-                    /* ---------------------------------------------------- */
+.exportButton {
+    background-color: #777;
+    color: var(--text-light);
+}
 
-                    @media (max-width: 1200px) {
-                        .configGrid {
-                            grid-template-columns: 1fr; /* Una columna en tablets */
-                        }
-                        .footerActions {
-                            left: 20px;
-                        }
-                    }
+.exportButton:hover {
+    background-color: #666;
+}
 
-                    @media (max-width: 600px) {
-                        body {
-                            font-size: 18px;
-                        }
-                        .dashboardContainer {
-                            padding: 10px;
-                        }
-                        .sidebar {
-                            display: none; /* Ocultar sidebar en móvil */
-                        }
-                        .footerActions {
-                            left: 10px;
-                            right: 10px;
-                            padding: 10px 15px;
-                            flex-direction: column;
-                            gap: 10px;
-                        }
-                        .leftFooterButtons {
-                            width: 100%;
-                            justify-content: space-between;
-                            gap: 10px;
-                        }
-                        .saveButton, .resetButton, .exportButton {
-                            flex-grow: 1;
-                            width: auto;
-                        }
-                        .configCard {
-                            padding: 20px;
-                        }
-                    }
+.leftFooterButtons {
+    display: flex;
+    gap: 15px;
+}
+
+/* ---------------------------------------------------- */
+/* ## Media Queries (Responsividad) */
+/* ---------------------------------------------------- */
+
+@media (max-width: 1200px) {
+    .configGrid {
+        grid-template-columns: 1fr; /* Una columna en tablets */
+    }
+    .footerActions {
+        left: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        font-size: 18px;
+    }
+    .dashboardContainer {
+        padding: 10px;
+    }
+    .sidebar {
+        display: none; /* Ocultar sidebar en móvil */
+    }
+    .footerActions {
+        left: 10px;
+        right: 10px;
+        padding: 10px 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .leftFooterButtons {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    .saveButton, .resetButton, .exportButton {
+        flex-grow: 1;
+        width: auto;
+    }
+    .configCard {
+        padding: 20px;
+    }
+}

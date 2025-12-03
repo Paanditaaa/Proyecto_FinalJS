@@ -3,25 +3,157 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Productos.css';
 import './ProductosModal.css';
-import { FaHome, FaBox, FaTruck, FaCog, FaSearch, FaFilter } from 'react-icons/fa';
+import { FaHome, FaBox, FaTruck, FaCog } from 'react-icons/fa';
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { MdOutlineHistory } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import UserAvatar from './components/UserAvatar';
+
+// --- COPIA DEL CUSTOM MODAL DE CONFIGURACION (INICIO) ---
+const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInput = false, inputPlaceholder = "" }) => {
+    // Estado local para el contenido del campo de texto
+    const [inputValue, setInputValue] = useState('');
+
+    if (!isOpen) return null;
+
+    // Estilos inline básicos para la superposición y la tarjeta del modal
+    const modalStyle = {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+        padding: '20px'
+    };
+
+    const contentStyle = {
+        position: 'relative', 
+        backgroundColor: '#2f254f', // var(--bg-card)
+        padding: '30px',
+        borderRadius: '12px',
+        maxWidth: '450px',
+        width: '100%',
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8)',
+        color: '#ffffff', // var(--text-light)
+    };
+    
+    // Estilo para el botón de cerrar (X)
+    const closeButtonStyle = {
+        position: 'absolute',
+        top: '15px',
+        right: '15px',
+        background: 'none',
+        border: 'none',
+        color: '#a0a0a0',
+        fontSize: '1.5em',
+        cursor: 'pointer',
+        fontWeight: 'bold',
+        lineHeight: '1',
+        transition: 'color 0.2s',
+    };
+
+    const buttonStyle = {
+        padding: '10px 20px',
+        borderRadius: '8px',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        border: 'none',
+        fontSize: '0.9em',
+        transition: 'background-color 0.2s',
+    };
+
+    // Colores basados en variables del CSS para coherencia
+    const confirmButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: type === 'confirm' ? '#ef4444' : '#4f46e5', 
+        color: '#ffffff',
+    };
+
+    const cancelButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#555',
+        color: '#ffffff',
+    };
+
+    const handleConfirm = () => {
+        if (onConfirm) onConfirm(showInput ? inputValue : undefined);
+        onClose(); 
+        setInputValue('');
+    };
+    
+    const handleClose = () => {
+        onClose();
+        setInputValue('');
+    };
+
+
+    return (
+        <div style={modalStyle}>
+            <div style={contentStyle}>
+                <button style={closeButtonStyle} onClick={handleClose}>
+                    &times; 
+                </button>
+                <h3 style={{
+                    marginTop: 0,
+                    borderBottom: '1px solid #3c3066',
+                    paddingBottom: '15px',
+                    marginBottom: '20px',
+                    color: type === 'confirm' ? '#ef4444' : '#4f46e5'
+                }}>
+                    {title}
+                </h3>
+                <p style={{ lineHeight: '1.4' }}>{message}</p>
+                
+                {showInput && (
+                    <div style={{marginTop: '20px'}}>
+                        <textarea
+                            style={{ minHeight: '120px', resize: 'vertical', padding: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: '#3c3066', color: '#ffffff', border: '1px solid #4f46e5', borderRadius: '8px' }}
+                            placeholder={inputPlaceholder}
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                        />
+                    </div>
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '25px', gap: '10px' }}>
+                    {type === 'confirm' && (
+                        <button style={cancelButtonStyle} onClick={handleClose}>
+                            Cancelar
+                        </button>
+                    )}
+                    <button 
+                        style={confirmButtonStyle} 
+                        onClick={handleConfirm}
+                        disabled={showInput && inputValue.trim() === ''} 
+                    >
+                        {showInput ? 'Enviar' : (type === 'confirm' ? 'Confirmar' : 'Aceptar')}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+// --- COPIA DEL CUSTOM MODAL DE CONFIGURACION (FIN) ---
+
+
 // --- Componente de Fila de Producto (ProductRow) ---
 const ProductRow = ({ id, colorClass, name, status, stock, unit, category, onAddStockClick, onEditClick, onDeleteClick }) => {
-
+    // ... (El código de ProductRow se mantiene igual)
     const getUnitIcon = (unit) => {
         switch (unit ? unit.toLowerCase() : '') {
-            case 'kg':
+            case '':
                 return '⚖️';
             case 'litros':
-                return '💧';
             case 'unidades':
             case 'rebanadas':
             case 'botellas':
             case 'paquetes':
-                return '🔢';
+                return '';
             default:
                 return '';
         }
@@ -51,8 +183,8 @@ const ProductRow = ({ id, colorClass, name, status, stock, unit, category, onAdd
 
             <td className="productCell actionsCell">
                 {/* Llama a la función del componente padre para abrir el modal de agregar stock */}
-                <button className="addSpecificStockButton" onClick={onAddStockClick}>
-                    <IoMdAdd /> Add Qty 📦
+                <button className="addSpecificStockButton" onClick={() => onAddStockClick({ id, name, stock, unit })}>
+                    <IoMdAdd /> Añadir existencias
                 </button>
             </td>
         </tr>
@@ -62,13 +194,15 @@ const ProductRow = ({ id, colorClass, name, status, stock, unit, category, onAdd
 
 // --- Componente Principal (Productos) ---
 function Productos() {
+    const navigate = useNavigate(); 
+
     // ESTADOS
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [editingProduct, setEditingProduct] = useState(null);
     const [isAddingProduct, setIsAddingProduct] = useState(false);
 
-    // ⭐ ESTADOS PARA AGREGAR STOCK
+    // ESTADOS PARA AGREGAR STOCK
     const [isAddingStock, setIsAddingStock] = useState(false);
     const [stockToUpdate, setStockToUpdate] = useState({ id: null, name: '', currentStock: 0, newStockAmount: '' });
 
@@ -80,6 +214,29 @@ function Productos() {
     // ESTADOS PARA AGREGAR CATEGORÍA
     const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [addCategoryForm, setAddCategoryForm] = useState({ Nombre: '' });
+
+    // --- Estados del Modal Custom (AÑADIDOS) ---
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalContent, setModalContent] = useState({
+        title: '',
+        message: '',
+        type: 'alert',
+        onConfirm: null,
+        showInput: false, 
+        inputPlaceholder: ''
+    });
+
+    // Función showModal (AÑADIDA)
+    const showModal = (title, message, type = 'alert', onConfirm = null, showInput = false, inputPlaceholder = '') => {
+        setModalContent({ title, message, type, onConfirm, showInput, inputPlaceholder });
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setModalContent({ title: '', message: '', type: 'alert', onConfirm: null, showInput: false, inputPlaceholder: '' });
+    };
+    // ---------------------------------------------
 
 
     // FUNCIÓN AUXILIAR PARA OBTENER EL NOMBRE DE LA CATEGORÍA
@@ -117,7 +274,7 @@ function Productos() {
             if (response.data && response.data.message) {
                 const mappedProducts = response.data.message.map((p, index) => {
 
-                    // ⭐ LECTURA DE STOCK: Usa p.StockMinimo
+                    // LECTURA DE STOCK: Usa p.StockMinimo
                     const stockValue = p.StockMinimo !== null && p.StockMinimo !== undefined
                         ? Number(p.StockMinimo)
                         : 0;
@@ -155,8 +312,25 @@ function Productos() {
         }
     }, [categories]);
 
+    // LÓGICA DE CERRAR SESIÓN (Acción real después de confirmar) ⭐
+    const handleLogoutExecute = () => {
+        // 1. Limpia el token de autenticación
+        localStorage.removeItem('token');
+        // 2. Redirige al usuario a la página de login (o la ruta que uses)
+        navigate('/'); 
+    };
 
-    // LÓGICA DE ELIMINAR 
+    // LÓGICA DE CERRAR SESIÓN (Abre el modal) ⭐
+    const handleLogout = () => {
+        showModal(
+            'Confirmación de Salida',
+            '¿Estás seguro de que quieres cerrar la sesión actual?',
+            'confirm',
+            handleLogoutExecute // Pasa la función que ejecuta el cierre
+        );
+    };
+
+    // LÓGICA DE ELIMINAR (Usando el modal nativo para mantener el código simple aquí, pero se podría migrar)
     const handleDeleteClick = async (product) => {
         if (window.confirm(`¿Estás seguro de que quieres eliminar "${product.name}"?`)) {
             try {
@@ -260,7 +434,7 @@ function Productos() {
         }
     };
 
-    // ⭐ LÓGICA DE AGREGAR STOCK (Modal y PUT a la API)
+    // LÓGICA DE AGREGAR STOCK (Modal y PUT a la API)
     const handleShowAddStockModal = (product) => {
         setStockToUpdate({
             id: product.id,
@@ -304,7 +478,15 @@ function Productos() {
             alert("Error al actualizar el stock. Asegúrate de que tu API acepte el campo 'StockMinimo' en el PUT.");
         }
     };
-    // ⭐ FIN LÓGICA DE AGREGAR STOCK
+    
+    // Función para manejar clics en el sidebar
+    const handleSidebarClick = (path, label) => {
+        if (label === "Cerrar sesion") {
+            handleLogout(); // Llama a la función que abre el modal Custom
+        } else if (path) {
+            navigate(path);
+        }
+    };
 
 
     return (
@@ -317,37 +499,32 @@ function Productos() {
                     <p className="loremText">Buen dia</p>
                 </div>
                 <div className="menu">
-                    <SidebarItem icon={FaHome} label="INICIO" path="/dashboard" />
-                    <SidebarItem icon={IoMdAdd} label="Orden nueva" path="/dashboard/orden-nueva" />
-                    <SidebarItem icon={MdOutlineHistory} label="Ordenes pasadas" path="/dashboard/ordenes-pasadas" />
-                    <SidebarItem icon={FaBox} label="Productos" isActive={true} path="/dashboard/productos" />
-                    <SidebarItem icon={FaTruck} label="Proveedores" path="/dashboard/proveedores" />
-                    <SidebarItem icon={FaCog} label="Configuracion" path="/dashboard/configuracion" />
-                    <SidebarItem icon={BsFillDoorOpenFill} label="Cerrar sesion" />
+                    <SidebarItem icon={FaHome} label="INICIO" path="/dashboard" onClick={() => handleSidebarClick('/dashboard', 'INICIO')} />
+                    <SidebarItem icon={IoMdAdd} label="Orden nueva" path="/dashboard/orden-nueva" onClick={() => handleSidebarClick('/dashboard/orden-nueva', 'Orden nueva')} />
+                    <SidebarItem icon={MdOutlineHistory} label="Ordenes pasadas" path="/dashboard/ordenes-pasadas" onClick={() => handleSidebarClick('/dashboard/ordenes-pasadas', 'Ordenes pasadas')} />
+                    <SidebarItem icon={FaBox} label="Productos" isActive={true} path="/dashboard/productos" onClick={() => handleSidebarClick('/dashboard/productos', 'Productos')} />
+                    <SidebarItem icon={FaTruck} label="Proveedores" path="/dashboard/proveedores" onClick={() => handleSidebarClick('/dashboard/proveedores', 'Proveedores')} />
+                    <SidebarItem icon={FaCog} label="Configuracion" path="/dashboard/configuracion" onClick={() => handleSidebarClick('/dashboard/configuracion', 'Configuracion')} />
+                    {/* El botón de Cerrar Sesión ahora usa handleSidebarClick, que llama a handleLogout */}
+                    <SidebarItem icon={BsFillDoorOpenFill} label="Cerrar sesion" onClick={() => handleSidebarClick(null, 'Cerrar sesion')} /> 
                 </div>
             </div>
 
             {/* -------------------- CONTENIDO PRINCIPAL -------------------- */}
             <div className="mainContent">
                 <div className="headerBar">
-                    <h1 className="title">Inventario de Productos 🍔</h1>
+                    <h1 className="title">Inventario de Productos</h1>
                 </div>
 
                 {/* -------------------- TABLA DE PRODUCTOS -------------------- */}
                 <div className="productsTableContainer">
                     <div className="productsTopBar">
-                        <div className="searchContainer">
-                            <input className="searchInput" placeholder="🔍 Buscar ingredientes o items..." />
-                        </div>
-                        <button className="filterButton"><FaFilter /> Filter by</button>
-
                         {/* BOTÓN PARA AGREGAR CATEGORÍA */}
-                        <button className="filterButton" onClick={handleAddCategoryClick}>
-                            <IoMdAdd /> Nueva Categoría 🏷️
+                        <button className="addProductButton" onClick={handleAddCategoryClick}>
+                            <IoMdAdd /> Nueva Categoría 
                         </button>
-
                         <button className="addProductButton" onClick={handleAddClick}>
-                            <IoMdAdd /> Add New Item 📦
+                            <IoMdAdd /> Agregar nuevo producto 
                         </button>
                     </div>
 
@@ -355,11 +532,11 @@ function Productos() {
                         <thead>
                             <tr className="tableHeader">
                                 <th></th>
-                                <th>Name of product</th>
+                                <th>Producto</th>
                                 <th>Status</th>
                                 <th>Stock</th>
-                                <th>Category</th>
-                                <th>Actions</th>
+                                <th>Categoria</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -373,8 +550,7 @@ function Productos() {
                                     stock={product.stock}
                                     unit={product.unit}
                                     category={product.category}
-                                    // Pasa la función para abrir el modal de stock
-                                    onAddStockClick={() => handleShowAddStockModal(product)}
+                                    onAddStockClick={() => handleShowAddStockModal(product)} 
                                     onEditClick={() => handleEditClick(product)}
                                     onDeleteClick={() => handleDeleteClick(product)}
                                 />
@@ -384,19 +560,22 @@ function Productos() {
                 </div>
             </div>
 
-            {/* -------------------- MODAL DE AGREGAR STOCK ⭐ NUEVO -------------------- */}
+            {/* -------------------- MODAL DE AGREGAR STOCK -------------------- */}
             {isAddingStock && stockToUpdate.id && (
                 <div className="modalOverlay">
-                    <div className="modalContent">
-                        <h2>Agregar Stock a: {stockToUpdate.name}</h2>
-                        <p>Stock actual: **{stockToUpdate.currentStock}**</p>
-                        <label>
-                            Cantidad a Añadir:
+                    <div className="modalContent" id='mierdilla'>
+                        <div>
+                            <h2>Agregar Stock a {stockToUpdate.name}</h2>
+                            <p>Stock actual: **{stockToUpdate.currentStock}**</p>
+                        </div>
+                        <label className='mierdilla'>
+                            <p>Cantidad a Añadir:</p>
                             <input
                                 type="number"
                                 placeholder="Ej: 50"
                                 value={stockToUpdate.newStockAmount}
                                 onChange={(e) => setStockToUpdate({ ...stockToUpdate, newStockAmount: e.target.value })}
+                                className='mierdilla'
                             />
                         </label>
                         <div className="modalActions">
@@ -454,23 +633,25 @@ function Productos() {
 
             {/* -------------------- MODAL DE AGREGAR PRODUCTO -------------------- */}
             {isAddingProduct && (
-                <div className="modalOverlay">
+                <div className="modalOverlay id=mierdilla">
                     <div className="modalContent">
                         <h2>Agregar Nuevo Producto</h2>
                         <label>
-                            Nombre:
+                            <p>Nombre:</p>
                             <input
                                 type="text"
                                 value={addForm.name}
                                 onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
+                                className='mierdilla'
                             />
                         </label>
                         <label>
-                            Categoría:
+                            <p>Categoría:</p>
                             <select
                                 value={addForm.categoryId}
                                 onChange={(e) => setAddForm({ ...addForm, categoryId: e.target.value })}
                                 className="modalSelect"
+                                id='mierdilla'
                             >
                                 <option value="">Seleccionar Categoría</option>
                                 {categories.map(cat => (
@@ -481,19 +662,22 @@ function Productos() {
                             </select>
                         </label>
                         <label>
-                            Stock Inicial:
+                            <p>Stock Inicial:</p>
                             <input
                                 type="number"
                                 value={addForm.stock}
                                 onChange={(e) => setAddForm({ ...addForm, stock: e.target.value })}
+                                className='mierdilla'
                             />
                         </label>
                         <label>
-                            Unidad:
+                            <p>Unidad:</p>
                             <input
                                 type="text"
                                 value={addForm.unit}
                                 onChange={(e) => setAddForm({ ...addForm, unit: e.target.value })}
+                                className='mierdilla'
+
                             />
                         </label>
                         <div className="modalActions">
@@ -508,13 +692,15 @@ function Productos() {
             {isAddingCategory && (
                 <div className="modalOverlay">
                     <div className="modalContent">
-                        <h2>Agregar Nueva Categoría 🏷️</h2>
+                        <h2>Agregar Nueva Categoría </h2>
                         <label>
-                            Nombre de la Categoría:
+                            <p>Nombre de la Categoría:</p>
                             <input
                                 type="text"
                                 value={addCategoryForm.Nombre}
                                 onChange={(e) => setAddCategoryForm({ Nombre: e.target.value })}
+                                className='mierdilla'
+
                             />
                         </label>
                         <div className="modalActions">
@@ -525,24 +711,36 @@ function Productos() {
                 </div>
             )}
 
+            {/* -------------------- MODAL GLOBAL CUSTOM -------------------- */}
+            <CustomModal
+                isOpen={isModalOpen}
+                title={modalContent.title}
+                message={modalContent.message}
+                type={modalContent.type}
+                onConfirm={modalContent.onConfirm}
+                onClose={closeModal}
+                showInput={modalContent.showInput} 
+                inputPlaceholder={modalContent.inputPlaceholder}
+            />
+
         </div>
     );
 }
 
 /* Componente para un elemento del menú lateral con navegación */
-const SidebarItem = ({ icon: Icon, label, isActive, path }) => {
-    const navigate = useNavigate();
-
+const SidebarItem = ({ icon: Icon, label, isActive, path, onClick }) => {
+    // Si hay un onClick, úsalo. Si no, navega.
     const handleClick = () => {
-        if (path) {
-            navigate(path);
+        if (onClick) {
+            onClick(); 
+            return;
         }
     };
     return (
         <div
             className={`sidebarItem ${isActive ? 'active' : ''}`}
             onClick={handleClick}
-            style={{ cursor: path ? 'pointer' : 'default' }}
+            style={{ cursor: 'pointer' }}
         >
             <Icon className="sidebarIcon" />
             <span className="sidebarLabel">{label}</span>

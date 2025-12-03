@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Configuracion.css';
 
-// Asegúrate de que el CSS esté cargado en tu entorno, ya que no se genera aquí.
-// import './Configuracion.css'; 
-
 // Importación de íconos
-import { FaHome, FaBox, FaTruck, FaCog, FaDatabase, FaShieldAlt, FaEnvelope, FaGlobe } from 'react-icons/fa';
+import { FaHome, FaBox, FaTruck, FaCog, FaDatabase, FaShieldAlt, FaEnvelope, FaGlobe, FaBug } from 'react-icons/fa';
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { MdOutlineHistory } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import UserAvatar from './components/UserAvatar';
-// --- Componente de Modal Personalizado (Reemplaza alert/confirm) ---
-const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose }) => {
+
+// --- Componente de Modal Personalizado (FINAL) ---
+const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInput = false, inputPlaceholder = "" }) => {
+    // Estado local para el contenido del campo de texto
+    const [inputValue, setInputValue] = useState('');
+
     if (!isOpen) return null;
 
     // Estilos inline básicos para la superposición y la tarjeta del modal
@@ -31,6 +32,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose }) => {
     };
 
     const contentStyle = {
+        position: 'relative', // Necesario para posicionar el botón de cerrar
         backgroundColor: '#2f254f', // var(--bg-card)
         padding: '30px',
         borderRadius: '12px',
@@ -38,6 +40,21 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose }) => {
         width: '100%',
         boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8)',
         color: '#ffffff', // var(--text-light)
+    };
+    
+    // Estilo para el botón de cerrar (X) AÑADIDO
+    const closeButtonStyle = {
+        position: 'absolute',
+        top: '15px',
+        right: '15px',
+        background: 'none',
+        border: 'none',
+        color: '#a0a0a0',
+        fontSize: '1.5em',
+        cursor: 'pointer',
+        fontWeight: 'bold',
+        lineHeight: '1',
+        transition: 'color 0.2s',
     };
 
     const buttonStyle = {
@@ -53,7 +70,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose }) => {
     // Colores basados en variables del CSS para coherencia
     const confirmButtonStyle = {
         ...buttonStyle,
-        backgroundColor: type === 'confirm' ? '#ef4444' : '#4f46e5', // Rojo para confirmación peligrosa (Reset/Logout) o Azul para Aceptar (Alert)
+        backgroundColor: type === 'confirm' ? '#ef4444' : '#4f46e5', // Rojo para confirmación peligrosa o Azul para Aceptar/Enviar
         color: '#ffffff',
     };
 
@@ -63,30 +80,72 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose }) => {
         color: '#ffffff',
     };
 
+    // FUNCIÓN MODIFICADA: Llama a onConfirm primero, luego cierra el modal
     const handleConfirm = () => {
-        if (onConfirm) onConfirm();
-        onClose();
+        // Pasa el valor del input si showInput es true
+        if (onConfirm) onConfirm(showInput ? inputValue : undefined);
+        
+        // Cierra el modal, haciéndolo desaparecer
+        onClose(); 
+        
+        // Limpiar el estado local al cerrar
+        setInputValue('');
     };
+    
+    // Función para manejar el cierre al presionar el botón "X" o "Cancelar"
+    const handleClose = () => {
+        onClose();
+        setInputValue('');
+    };
+
 
     return (
         <div style={modalStyle}>
             <div style={contentStyle}>
+                 {/* --- BOTÓN DE CERRAR (X) AÑADIDO --- */}
+                 <button style={closeButtonStyle} onClick={handleClose}>
+                    &times; {/* El carácter HTML para una X */}
+                </button>
+                {/* ------------------------------------ */}
                 <h3 style={{
                     marginTop: 0,
                     borderBottom: '1px solid #3c3066',
                     paddingBottom: '15px',
                     marginBottom: '20px',
-                    color: type === 'confirm' ? '#ef4444' : '#4f46e5' // Color del título según el tipo
-                }}>{title}</h3>
+                    color: type === 'confirm' ? '#ef4444' : '#4f46e5'
+                }}>
+                    {title}
+                </h3>
                 <p style={{ lineHeight: '1.4' }}>{message}</p>
+                
+                {/* --- CAMPO DE TEXTO PARA ERRORES/SUGERENCIAS --- */}
+                {showInput && (
+                    <div className="configFormGroup" style={{marginTop: '20px'}}>
+                        <textarea
+                            className="configInput" 
+                            style={{ minHeight: '120px', resize: 'vertical', padding: '15px' }}
+                            placeholder={inputPlaceholder}
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                        />
+                    </div>
+                )}
+                {/* ----------------------------------------------- */}
+
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '25px', gap: '10px' }}>
                     {type === 'confirm' && (
-                        <button style={cancelButtonStyle} onClick={onClose}>
+                        <button style={cancelButtonStyle} onClick={handleClose}>
                             Cancelar
                         </button>
                     )}
-                    <button style={confirmButtonStyle} onClick={handleConfirm}>
-                        {type === 'confirm' ? 'Confirmar' : 'Aceptar'}
+                    <button 
+                        style={confirmButtonStyle} 
+                        onClick={handleConfirm}
+                        // Deshabilitar si se requiere input y está vacío
+                        disabled={showInput && inputValue.trim() === ''} 
+                    >
+                        {/* Cambia el texto del botón si hay un input */}
+                        {showInput ? 'Enviar' : (type === 'confirm' ? 'Confirmar' : 'Aceptar')}
                     </button>
                 </div>
             </div>
@@ -172,17 +231,22 @@ function Configuracion() {
         title: '',
         message: '',
         type: 'alert',
-        onConfirm: null
+        onConfirm: null,
+        // Nuevos campos
+        showInput: false, 
+        inputPlaceholder: ''
     });
 
-    const showModal = (title, message, type = 'alert', onConfirm = null) => {
-        setModalContent({ title, message, type, onConfirm });
+    // Función showModal
+    const showModal = (title, message, type = 'alert', onConfirm = null, showInput = false, inputPlaceholder = '') => {
+        setModalContent({ title, message, type, onConfirm, showInput, inputPlaceholder });
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setModalContent({ title: '', message: '', type: 'alert', onConfirm: null });
+        // Limpiar todos los campos al cerrar
+        setModalContent({ title: '', message: '', type: 'alert', onConfirm: null, showInput: false, inputPlaceholder: '' });
     };
 
     // Manejador de cambios genérico
@@ -196,14 +260,11 @@ function Configuracion() {
 
     // --- Funciones de Acción ---
 
-    // Lógica que se ejecuta *después* de la confirmación de guardado
     const handleSave = () => {
         console.log("Configuración guardada:", config);
-        // Aquí iría la lógica para enviar los datos al backend (API)
         showModal('Éxito al Guardar', 'Configuración guardada exitosamente.', 'alert');
     };
 
-    // Lógica que se ejecuta *después* de la confirmación de restablecimiento
     const handleResetConfirm = () => {
         // Restaurar a valores predeterminados
         setConfig({
@@ -217,10 +278,10 @@ function Configuracion() {
             twoFactorAuth: false,
             isConnected: false,
         });
-        showModal('Restablecido', 'Configuración restablecida a valores predeterminados.', 'alert');
+        // NOTA: El modal de confirmación se cierra automáticamente después de handleResetConfirm
+        // Gracias a la lógica en CustomModal/handleConfirm.
     };
 
-    // Función que abre el modal de confirmación para restablecer
     const handleReset = () => {
         showModal(
             'Confirmación de Restablecimiento',
@@ -230,8 +291,43 @@ function Configuracion() {
         );
     };
 
+    // Lógica para manejar el envío del feedback (errores/sugerencias)
+    const handleSubmitFeedback = (feedbackType) => (text) => {
+        console.log(`[${feedbackType}] Contenido enviado:`, text);
+        // Aquí iría la lógica para enviar el error/sugerencia al backend
+        // Abrir un nuevo modal de éxito SÓLO si el envío fue exitoso.
+        showModal('Gracias por tu aporte', `Tu ${feedbackType} ha sido enviado exitosamente.`, 'alert');
+        
+        // NOTA: El modal de input actual se cierra automáticamente después de handleSubmitFeedback
+    };
+
+    // Función para dejar errores (Reportar error)
+    const reportError = () => 
+    {
+        showModal(
+            "Reportar un Error",
+            "Describe con detalle el error o problema que encontraste en el programa:",
+            'alert', 
+            handleSubmitFeedback('Error'), 
+            true, // showInput = true
+            "Ej: No funciona el botón de cerrar sesion." // inputPlaceholder
+        );
+    }
+
+    // Función para mencionar comentarios (Sugerencias)
+    const comentaSurg = () =>
+    {
+        showModal(
+            "Comentarios y Sugerencias",
+            "Agradecemos tus ideas para mejorar y buenos comentarios:",
+            'alert',
+            handleSubmitFeedback('Sugerencia'), 
+            true, // showInput = true
+            "Ej: Sería agradable agregar esta opcion" // inputPlaceholder
+        );
+    }
+
     const handleExport = () => {
-        // Lógica para generar un archivo JSON o TXT de la configuración
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataStr);
@@ -242,10 +338,8 @@ function Configuracion() {
     };
 
     const handleTestConnection = () => {
-        // Simulación de conexión
         console.log("Probando conexión a DB con:", config.dbHost, config.dbUser);
 
-        // Simular un tiempo de espera
         setTimeout(() => {
             const success = Math.random() > 0.3; // 70% de éxito
             setConfig(prev => ({ ...prev, isConnected: success }));
@@ -255,15 +349,11 @@ function Configuracion() {
         }, 1500);
     };
 
-    // Lógica que se ejecuta *después* de la confirmación de cerrar sesión
     const handleLogoutConfirm = () => {
         console.log("Sesión cerrada");
-        // Aquí iría la lógica real de logout (limpiar tokens, etc.)
-        // navigate('/login'); // Navegación a login
-        showModal('Sesión Cerrada', 'Has cerrado tu sesión exitosamente.', 'alert');
+        // NOTA: El modal de confirmación se cierra automáticamente después de handleLogoutConfirm
     };
 
-    // Manejador centralizado de clics en el Sidebar
     const handleSidebarClick = (label, path) => {
         if (path) {
             navigate(path);
@@ -459,13 +549,34 @@ function Configuracion() {
                             </select>
                         </div>
                     </div>
+
+                    {/* --- 5. Tarjeta de bugs y errores --- */}
+                    <div className="configCard bugs">
+                        <div className="cardHeader">
+                            <FaBug />
+                            <h2 className="cardTitle">Errores y sugerencias</h2>
+                        </div>
+                        {/* Botones que abren el modal con input */}
+                        <button className="actionButton connectButton" onClick={reportError}>
+                            Reportar error
+                        </button>
+                        <button className="actionButton connectButton" onClick={comentaSurg}>
+                            Dejar comentario o sugerencias 
+                        </button>
+                            <button className="actionButton connectButton" onClick={comentaSurg}>
+                            Ver comentarios 
+                        </button>
+                            <button className="actionButton connectButton" onClick={comentaSurg}>
+                            Ver sugerencias 
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {/* -------------------- ACCIONES FIJAS AL PIE -------------------- */}
             <FooterActions
                 onSave={handleSave}
-                onReset={handleReset} // Ahora llama a la función que dispara el modal de confirmación
+                onReset={handleReset} 
                 onExport={handleExport}
             />
 
@@ -477,6 +588,9 @@ function Configuracion() {
                 type={modalContent.type}
                 onConfirm={modalContent.onConfirm}
                 onClose={closeModal}
+                // Props para el input
+                showInput={modalContent.showInput} 
+                inputPlaceholder={modalContent.inputPlaceholder}
             />
         </div>
     );
