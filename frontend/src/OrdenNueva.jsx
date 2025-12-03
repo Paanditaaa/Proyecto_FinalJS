@@ -51,7 +51,7 @@ const CustomModal = ({ isOpen, content, onClose, navigate }) => {
     const handleAction = () => {
         if (onConfirm) {
             // Ejecuta la función de confirmación (incluyendo la lógica de logout)
-            onConfirm(inputValue, navigate); 
+            onConfirm(inputValue, navigate);
         }
         onClose();
     };
@@ -143,8 +143,8 @@ const ProductCard = ({ product, onAdd, onDelete }) => (
                 <div className="productIcon">🍔</div>
             )}
 
-            <span className="productName">{product.Nombre}</span>
-            <span className="productPrice">${parseFloat(product.Precio).toFixed(2)}</span>
+            <div className="productName">{product.Nombre}</div>
+            <div className="productPrice">${parseFloat(product.Precio).toFixed(2)}</div>
         </div>
         {onDelete && (
             <button
@@ -257,14 +257,14 @@ const OrderSummary = ({ orderItems, subtotal, taxRate = 0.16, onProcessOrder, on
             </div>
 
             {/* BOTÓN MODIFICADO para que se vea igual de bonito */}
-            <button 
+            <button
                 className="primaryActionButton" /* Nueva clase para estilo destacado */
-                disabled={orderItems.length === 0} 
+                disabled={orderItems.length === 0}
                 onClick={onProcessOrder}
-                style={{ 
-                    width: '100%', 
-                    padding: '15px 0', 
-                    marginTop: '20px', 
+                style={{
+                    width: '100%',
+                    padding: '15px 0',
+                    marginTop: '20px',
                     fontSize: '1.1em',
                 }}
             >
@@ -582,7 +582,7 @@ const NewOrderView = () => {
 function OrdenNueva() {
     const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState(dayjs());
-    
+
     // ESTADOS DEL MODAL
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalContent, setModalContent] = useState({});
@@ -599,12 +599,14 @@ function OrdenNueva() {
         setModalContent({ title, message, type, onConfirm, showInput, inputPlaceholder });
         setIsModalOpen(true);
     };
-    
+
     // FUNCIÓN DE CIERRE DE MODAL
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setModalContent({});
     };
+    // -- Constante que permite que aparezca el nombre del usuario en el sidebar --
+    const userName = localStorage.getItem('userName') || "Invitado";
 
     return (
         <div className="dashboardContainer">
@@ -612,7 +614,7 @@ function OrdenNueva() {
             <div className="sidebar">
                 <div className="profileSection">
                     <UserAvatar />
-                    <h2 className="accountTitle">ACCOUNT</h2>
+                    <h2 className="accountTitle">{userName}</h2>
                     <p className="loremText">Buen dia</p>
                 </div>
                 <div className="menu">
@@ -636,7 +638,7 @@ function OrdenNueva() {
                 {/* Muestra la vista de órdenes */}
                 <NewOrderView />
             </div>
-            
+
             {/* -------------------- MODAL GENÉRICO -------------------- */}
             <CustomModal
                 isOpen={isModalOpen}

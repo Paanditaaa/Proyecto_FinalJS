@@ -435,7 +435,8 @@ function Proveedores() {
             }
         }
     };
-
+    // -- Constante que permite que aparezca el nombre del usuario en el sidebar --
+    const userName = localStorage.getItem('userName') || "Invitado";
     // Funciones para el Modal de Cerrar Sesión
     const handleLogoutClick = () => {
         setIsLogoutModalOpen(true);
@@ -457,7 +458,7 @@ function Proveedores() {
             <div className="sidebar">
                 <div className="profileSection">
                     <UserAvatar />
-                    <h2 className="accountTitle">ACCOUNT</h2>
+                    <h2 className="accountTitle">{userName}</h2>
                     <p className="loremText">Buen dia</p>
                 </div>
                 <div className="menu">

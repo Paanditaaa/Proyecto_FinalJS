@@ -41,7 +41,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
         boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8)',
         color: '#ffffff', // var(--text-light)
     };
-    
+
     // Estilo para el botón de cerrar (X) AÑADIDO
     const closeButtonStyle = {
         position: 'absolute',
@@ -84,14 +84,14 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
     const handleConfirm = () => {
         // Pasa el valor del input si showInput es true
         if (onConfirm) onConfirm(showInput ? inputValue : undefined);
-        
+
         // Cierra el modal, haciéndolo desaparecer
-        onClose(); 
-        
+        onClose();
+
         // Limpiar el estado local al cerrar
         setInputValue('');
     };
-    
+
     // Función para manejar el cierre al presionar el botón "X" o "Cancelar"
     const handleClose = () => {
         onClose();
@@ -102,8 +102,8 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
     return (
         <div style={modalStyle}>
             <div style={contentStyle}>
-                 {/* --- BOTÓN DE CERRAR (X) AÑADIDO --- */}
-                 <button style={closeButtonStyle} onClick={handleClose}>
+                {/* --- BOTÓN DE CERRAR (X) AÑADIDO --- */}
+                <button style={closeButtonStyle} onClick={handleClose}>
                     &times; {/* El carácter HTML para una X */}
                 </button>
                 {/* ------------------------------------ */}
@@ -116,13 +116,13 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
                 }}>
                     {title}
                 </h3>
-                <p style={{ lineHeight: '1.4' }}>{message}</p>
-                
+                <div style={{ lineHeight: '1.4' }}>{message}</div>
+
                 {/* --- CAMPO DE TEXTO PARA ERRORES/SUGERENCIAS --- */}
                 {showInput && (
-                    <div className="configFormGroup" style={{marginTop: '20px'}}>
+                    <div className="configFormGroup" style={{ marginTop: '20px' }}>
                         <textarea
-                            className="configInput" 
+                            className="configInput"
                             style={{ minHeight: '120px', resize: 'vertical', padding: '15px' }}
                             placeholder={inputPlaceholder}
                             value={inputValue}
@@ -138,11 +138,11 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
                             Cancelar
                         </button>
                     )}
-                    <button 
-                        style={confirmButtonStyle} 
+                    <button
+                        style={confirmButtonStyle}
                         onClick={handleConfirm}
                         // Deshabilitar si se requiere input y está vacío
-                        disabled={showInput && inputValue.trim() === ''} 
+                        disabled={showInput && inputValue.trim() === ''}
                     >
                         {/* Cambia el texto del botón si hay un input */}
                         {showInput ? 'Enviar' : (type === 'confirm' ? 'Confirmar' : 'Aceptar')}
@@ -166,6 +166,8 @@ const SwitchToggle = ({ isChecked, onToggle, label, subtext }) => (
         </label>
     </div>
 );
+// -- Constante que permite que aparezca el nombre del usuario en el sidebar --
+const userName = localStorage.getItem('userName') || "Invitado";
 
 // --- Componente de Estado de Conexión ---
 const ConnectionStatus = ({ isConnected }) => {
@@ -233,7 +235,7 @@ function Configuracion() {
         type: 'alert',
         onConfirm: null,
         // Nuevos campos
-        showInput: false, 
+        showInput: false,
         inputPlaceholder: ''
     });
 
@@ -292,40 +294,112 @@ function Configuracion() {
     };
 
     // Lógica para manejar el envío del feedback (errores/sugerencias)
-    const handleSubmitFeedback = (feedbackType) => (text) => {
+    const handleSubmitFeedback = (feedbackType) => async (text) => {
         console.log(`[${feedbackType}] Contenido enviado:`, text);
-        // Aquí iría la lógica para enviar el error/sugerencia al backend
-        // Abrir un nuevo modal de éxito SÓLO si el envío fue exitoso.
-        showModal('Gracias por tu aporte', `Tu ${feedbackType} ha sido enviado exitosamente.`, 'alert');
-        
-        // NOTA: El modal de input actual se cierra automáticamente después de handleSubmitFeedback
+
+        const endpoint = feedbackType === 'Error' ? '/api/feedback/report' : '/api/feedback/suggestion';
+        const bodyKey = feedbackType === 'Error' ? 'reporte' : 'sugerencia';
+
+        try {
+            const response = await fetch(`http://localhost:3002${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ [bodyKey]: text }),
+            });
+
+            if (response.ok) {
+                showModal('Gracias por tu aporte', `Tu ${feedbackType} ha sido enviado exitosamente.`, 'alert');
+            } else {
+                const errorData = await response.json();
+                showModal('Error', `No se pudo enviar el ${feedbackType}: ${errorData.error || 'Error desconocido'}`, 'alert');
+            }
+        } catch (error) {
+            console.error('Error de red:', error);
+            showModal('Error de Conexión', `No se pudo conectar con el servidor para enviar el ${feedbackType}.`, 'alert');
+        }
     };
 
     // Función para dejar errores (Reportar error)
-    const reportError = () => 
-    {
+    const reportError = () => {
         showModal(
             "Reportar un Error",
             "Describe con detalle el error o problema que encontraste en el programa:",
-            'alert', 
-            handleSubmitFeedback('Error'), 
+            'alert',
+            handleSubmitFeedback('Error'),
             true, // showInput = true
             "Ej: No funciona el botón de cerrar sesion." // inputPlaceholder
         );
     }
 
     // Función para mencionar comentarios (Sugerencias)
-    const comentaSurg = () =>
-    {
+    const comentaSurg = () => {
         showModal(
             "Comentarios y Sugerencias",
             "Agradecemos tus ideas para mejorar y buenos comentarios:",
             'alert',
-            handleSubmitFeedback('Sugerencia'), 
+            handleSubmitFeedback('Sugerencia'),
             true, // showInput = true
             "Ej: Sería agradable agregar esta opcion" // inputPlaceholder
         );
     }
+
+    const handleViewReports = async () => {
+        try {
+            const response = await fetch('http://localhost:3002/api/feedback/report');
+            if (response.ok) {
+                const reports = await response.json();
+                const content = (
+                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                        {reports.length === 0 ? <p>No hay reportes.</p> : (
+                            <ul style={{ listStyle: 'none', padding: 0 }}>
+                                {reports.map(r => (
+                                    <li key={r.IDReporte} style={{ borderBottom: '1px solid #444', padding: '10px 0' }}>
+                                        <small style={{ color: '#aaa' }}>{new Date(r.Fecha).toLocaleDateString()}</small>
+                                        <p style={{ margin: '5px 0' }}>{r.Reporte}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                );
+                showModal('Reportes de Errores', content, 'alert');
+            } else {
+                showModal('Error', 'No se pudieron cargar los reportes.', 'alert');
+            }
+        } catch (error) {
+            showModal('Error', 'Error de conexión.', 'alert');
+        }
+    };
+
+    const handleViewSuggestions = async () => {
+        try {
+            const response = await fetch('http://localhost:3002/api/feedback/suggestion');
+            if (response.ok) {
+                const suggestions = await response.json();
+                const content = (
+                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                        {suggestions.length === 0 ? <p>No hay sugerencias.</p> : (
+                            <ul style={{ listStyle: 'none', padding: 0 }}>
+                                {suggestions.map(s => (
+                                    <li key={s.IDSugerencia} style={{ borderBottom: '1px solid #444', padding: '10px 0' }}>
+                                        <small style={{ color: '#aaa' }}>{new Date(s.Fecha).toLocaleDateString()}</small>
+                                        <p style={{ margin: '5px 0' }}>{s.Sugerencia}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                );
+                showModal('Sugerencias y Comentarios', content, 'alert');
+            } else {
+                showModal('Error', 'No se pudieron cargar las sugerencias.', 'alert');
+            }
+        } catch (error) {
+            showModal('Error', 'Error de conexión.', 'alert');
+        }
+    };
 
     const handleExport = () => {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
@@ -374,7 +448,7 @@ function Configuracion() {
             <div className="sidebar">
                 <div className="profileSection">
                     <UserAvatar />
-                    <h2 className="accountTitle">ACCOUNT</h2>
+                    <h2 className="accountTitle">{userName}</h2>
                     <p className="loremText">Buen dia</p>
                 </div>
                 <div className="menu">
@@ -561,13 +635,13 @@ function Configuracion() {
                             Reportar error
                         </button>
                         <button className="actionButton connectButton" onClick={comentaSurg}>
-                            Dejar comentario o sugerencias 
+                            Dejar comentario o sugerencias
                         </button>
-                            <button className="actionButton connectButton" onClick={comentaSurg}>
-                            Ver comentarios 
+                        <button className="actionButton connectButton" onClick={handleViewReports}>
+                            Ver reportes
                         </button>
-                            <button className="actionButton connectButton" onClick={comentaSurg}>
-                            Ver sugerencias 
+                        <button className="actionButton connectButton" onClick={handleViewSuggestions}>
+                            Ver sugerencias
                         </button>
                     </div>
                 </div>
@@ -576,7 +650,7 @@ function Configuracion() {
             {/* -------------------- ACCIONES FIJAS AL PIE -------------------- */}
             <FooterActions
                 onSave={handleSave}
-                onReset={handleReset} 
+                onReset={handleReset}
                 onExport={handleExport}
             />
 
@@ -589,7 +663,7 @@ function Configuracion() {
                 onConfirm={modalContent.onConfirm}
                 onClose={closeModal}
                 // Props para el input
-                showInput={modalContent.showInput} 
+                showInput={modalContent.showInput}
                 inputPlaceholder={modalContent.inputPlaceholder}
             />
         </div>

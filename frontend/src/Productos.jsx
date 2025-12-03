@@ -32,7 +32,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
     };
 
     const contentStyle = {
-        position: 'relative', 
+        position: 'relative',
         backgroundColor: '#2f254f', // var(--bg-card)
         padding: '30px',
         borderRadius: '12px',
@@ -41,7 +41,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
         boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8)',
         color: '#ffffff', // var(--text-light)
     };
-    
+
     // Estilo para el botón de cerrar (X)
     const closeButtonStyle = {
         position: 'absolute',
@@ -70,7 +70,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
     // Colores basados en variables del CSS para coherencia
     const confirmButtonStyle = {
         ...buttonStyle,
-        backgroundColor: type === 'confirm' ? '#ef4444' : '#4f46e5', 
+        backgroundColor: type === 'confirm' ? '#ef4444' : '#4f46e5',
         color: '#ffffff',
     };
 
@@ -82,10 +82,10 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
 
     const handleConfirm = () => {
         if (onConfirm) onConfirm(showInput ? inputValue : undefined);
-        onClose(); 
+        onClose();
         setInputValue('');
     };
-    
+
     const handleClose = () => {
         onClose();
         setInputValue('');
@@ -96,7 +96,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
         <div style={modalStyle}>
             <div style={contentStyle}>
                 <button style={closeButtonStyle} onClick={handleClose}>
-                    &times; 
+                    &times;
                 </button>
                 <h3 style={{
                     marginTop: 0,
@@ -108,9 +108,9 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
                     {title}
                 </h3>
                 <p style={{ lineHeight: '1.4' }}>{message}</p>
-                
+
                 {showInput && (
-                    <div style={{marginTop: '20px'}}>
+                    <div style={{ marginTop: '20px' }}>
                         <textarea
                             style={{ minHeight: '120px', resize: 'vertical', padding: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: '#3c3066', color: '#ffffff', border: '1px solid #4f46e5', borderRadius: '8px' }}
                             placeholder={inputPlaceholder}
@@ -126,10 +126,10 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
                             Cancelar
                         </button>
                     )}
-                    <button 
-                        style={confirmButtonStyle} 
+                    <button
+                        style={confirmButtonStyle}
                         onClick={handleConfirm}
-                        disabled={showInput && inputValue.trim() === ''} 
+                        disabled={showInput && inputValue.trim() === ''}
                     >
                         {showInput ? 'Enviar' : (type === 'confirm' ? 'Confirmar' : 'Aceptar')}
                     </button>
@@ -194,7 +194,7 @@ const ProductRow = ({ id, colorClass, name, status, stock, unit, category, onAdd
 
 // --- Componente Principal (Productos) ---
 function Productos() {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     // ESTADOS
     const [products, setProducts] = useState([]);
@@ -222,7 +222,7 @@ function Productos() {
         message: '',
         type: 'alert',
         onConfirm: null,
-        showInput: false, 
+        showInput: false,
         inputPlaceholder: ''
     });
 
@@ -317,7 +317,7 @@ function Productos() {
         // 1. Limpia el token de autenticación
         localStorage.removeItem('token');
         // 2. Redirige al usuario a la página de login (o la ruta que uses)
-        navigate('/'); 
+        navigate('/');
     };
 
     // LÓGICA DE CERRAR SESIÓN (Abre el modal) ⭐
@@ -478,7 +478,7 @@ function Productos() {
             alert("Error al actualizar el stock. Asegúrate de que tu API acepte el campo 'StockMinimo' en el PUT.");
         }
     };
-    
+
     // Función para manejar clics en el sidebar
     const handleSidebarClick = (path, label) => {
         if (label === "Cerrar sesion") {
@@ -495,7 +495,7 @@ function Productos() {
             <div className="sidebar">
                 <div className="profileSection">
                     <UserAvatar />
-                    <h2 className="accountTitle">ACCOUNT</h2>
+                    <h2 className="accountTitle">{userName}</h2>
                     <p className="loremText">Buen dia</p>
                 </div>
                 <div className="menu">
@@ -506,7 +506,7 @@ function Productos() {
                     <SidebarItem icon={FaTruck} label="Proveedores" path="/dashboard/proveedores" onClick={() => handleSidebarClick('/dashboard/proveedores', 'Proveedores')} />
                     <SidebarItem icon={FaCog} label="Configuracion" path="/dashboard/configuracion" onClick={() => handleSidebarClick('/dashboard/configuracion', 'Configuracion')} />
                     {/* El botón de Cerrar Sesión ahora usa handleSidebarClick, que llama a handleLogout */}
-                    <SidebarItem icon={BsFillDoorOpenFill} label="Cerrar sesion" onClick={() => handleSidebarClick(null, 'Cerrar sesion')} /> 
+                    <SidebarItem icon={BsFillDoorOpenFill} label="Cerrar sesion" onClick={() => handleSidebarClick(null, 'Cerrar sesion')} />
                 </div>
             </div>
 
@@ -521,10 +521,10 @@ function Productos() {
                     <div className="productsTopBar">
                         {/* BOTÓN PARA AGREGAR CATEGORÍA */}
                         <button className="addProductButton" onClick={handleAddCategoryClick}>
-                            <IoMdAdd /> Nueva Categoría 
+                            <IoMdAdd /> Nueva Categoría
                         </button>
                         <button className="addProductButton" onClick={handleAddClick}>
-                            <IoMdAdd /> Agregar nuevo producto 
+                            <IoMdAdd /> Agregar nuevo producto
                         </button>
                     </div>
 
@@ -550,7 +550,7 @@ function Productos() {
                                     stock={product.stock}
                                     unit={product.unit}
                                     category={product.category}
-                                    onAddStockClick={() => handleShowAddStockModal(product)} 
+                                    onAddStockClick={() => handleShowAddStockModal(product)}
                                     onEditClick={() => handleEditClick(product)}
                                     onDeleteClick={() => handleDeleteClick(product)}
                                 />
@@ -719,20 +719,21 @@ function Productos() {
                 type={modalContent.type}
                 onConfirm={modalContent.onConfirm}
                 onClose={closeModal}
-                showInput={modalContent.showInput} 
+                showInput={modalContent.showInput}
                 inputPlaceholder={modalContent.inputPlaceholder}
             />
 
         </div>
     );
 }
-
+// -- Constante que permite que aparezca el nombre del usuario en el sidebar --
+const userName = localStorage.getItem('userName') || "Invitado";
 /* Componente para un elemento del menú lateral con navegación */
 const SidebarItem = ({ icon: Icon, label, isActive, path, onClick }) => {
     // Si hay un onClick, úsalo. Si no, navega.
     const handleClick = () => {
         if (onClick) {
-            onClick(); 
+            onClick();
             return;
         }
     };

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-12-2025 a las 04:09:51
+-- Tiempo de generación: 03-12-2025 a las 04:09:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -157,6 +157,30 @@ INSERT INTO `receta` (`IDReceta`, `IDPlatillo`, `IDProducto`, `Cantidad`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `reporte`
+--
+
+CREATE TABLE `reporte` (
+  `IDReporte` int(11) NOT NULL,
+  `Reporte` varchar(300) NOT NULL,
+  `Fecha` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `sugerencia`
+--
+
+CREATE TABLE `sugerencia` (
+  `IDSugerencia` int(11) NOT NULL,
+  `Sugerencia` varchar(300) NOT NULL,
+  `Fecha` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `usuario`
 --
 
@@ -219,6 +243,18 @@ ALTER TABLE `receta`
   ADD KEY `IDProducto` (`IDProducto`);
 
 --
+-- Indices de la tabla `reporte`
+--
+ALTER TABLE `reporte`
+  ADD PRIMARY KEY (`IDReporte`);
+
+--
+-- Indices de la tabla `sugerencia`
+--
+ALTER TABLE `sugerencia`
+  ADD PRIMARY KEY (`IDSugerencia`);
+
+--
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
@@ -263,6 +299,18 @@ ALTER TABLE `proveedor`
 --
 ALTER TABLE `receta`
   MODIFY `IDReceta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT de la tabla `reporte`
+--
+ALTER TABLE `reporte`
+  MODIFY `IDReporte` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `sugerencia`
+--
+ALTER TABLE `sugerencia`
+  MODIFY `IDSugerencia` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`

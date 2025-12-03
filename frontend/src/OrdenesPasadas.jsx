@@ -11,6 +11,9 @@ import UserAvatar from './components/UserAvatar';
 // -------------------------------------------------------------
 // Componente de Modal Genérico
 // -------------------------------------------------------------
+// -- Constante que permite que aparezca el nombre del usuario en el sidebar --
+const userName = localStorage.getItem('userName') || "Invitado";
+
 const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInput = false, inputPlaceholder = "" }) => {
     // Estado local para el contenido del campo de texto
     const [inputValue, setInputValue] = useState('');
@@ -43,7 +46,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
         color: '#ffffff',
         textAlign: 'center'
     };
-    
+
     // Estilo para el botón de cerrar (X)
     const closeButtonStyle = {
         position: 'absolute',
@@ -87,14 +90,14 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
     const handleConfirm = () => {
         // Pasa el valor del input si showInput es true
         if (onConfirm) onConfirm(showInput ? inputValue : undefined);
-        
+
         // Cierra el modal, haciéndolo desaparecer
-        onClose(); 
-        
+        onClose();
+
         // Limpiar el estado local al cerrar
         setInputValue('');
     };
-    
+
     // Función para manejar el cierre al presionar el botón "X" o "Cancelar"
     const handleClose = () => {
         onClose();
@@ -118,12 +121,12 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
                     {title}
                 </h3>
                 <p style={{ lineHeight: '1.4' }}>{message}</p>
-                
+
                 {/* --- CAMPO DE TEXTO PARA INPUT --- */}
                 {showInput && (
-                    <div style={{marginTop: '20px'}}>
+                    <div style={{ marginTop: '20px' }}>
                         <textarea
-                            className="configInput" 
+                            className="configInput"
                             style={{ minHeight: '120px', resize: 'vertical', padding: '15px', width: '90%' }}
                             placeholder={inputPlaceholder}
                             value={inputValue}
@@ -141,11 +144,11 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
                         </button>
                     )}
                     {/* Botón de Confirmar / Aceptar / Enviar */}
-                    <button 
-                        style={confirmButtonStyle} 
+                    <button
+                        style={confirmButtonStyle}
                         onClick={handleConfirm}
                         // Deshabilitar si se requiere input y está vacío
-                        disabled={showInput && inputValue.trim() === ''} 
+                        disabled={showInput && inputValue.trim() === ''}
                     >
                         {showInput ? 'Enviar' : (type === 'confirm' ? 'Confirmar' : 'Aceptar')}
                     </button>
@@ -188,7 +191,7 @@ const OrderDetailsModal = ({ isOpen, order, onClose }) => {
         boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8)',
         color: '#ffffff',
     };
-    
+
     // Estilo para el botón de cerrar (X)
     const closeButtonStyle = {
         position: 'absolute',
@@ -205,15 +208,15 @@ const OrderDetailsModal = ({ isOpen, order, onClose }) => {
     };
 
     // Formatear la fecha
-    const formattedDate = new Date(order.Fecha).toLocaleDateString('es-ES', { 
-        year: 'numeric', month: 'long', day: 'numeric' 
+    const formattedDate = new Date(order.Fecha).toLocaleDateString('es-ES', {
+        year: 'numeric', month: 'long', day: 'numeric'
     });
 
     // Asegurar que Detalles sea un array y calcular el total de los detalles
     const detalles = order.Detalles || [];
     const totalOrderCost = detalles.reduce((sum, item) => sum + (item.Cantidad * item.PrecioIndividual), 0);
     const totalOrderDisplay = `$${parseFloat(totalOrderCost).toFixed(2)}`;
-    
+
     // Usamos el Total de la orden o calculamos si no está presente
     const orderTotal = order.Total ? `$${parseFloat(order.Total).toFixed(2)}` : totalOrderDisplay;
 
@@ -232,10 +235,10 @@ const OrderDetailsModal = ({ isOpen, order, onClose }) => {
                     color: '#4f46e5',
                     textAlign: 'center'
                 }}>
-                    Detalles de Orden <span style={{color: '#ffffff', fontWeight: 'normal'}}>{order.IDOrden}</span>
+                    Detalles de Orden <span style={{ color: '#ffffff', fontWeight: 'normal' }}>{order.IDOrden}</span>
                 </h3>
 
-                <p style={{marginBottom: '20px', fontSize: '0.9em', color: '#ccc', textAlign: 'center'}}>
+                <p style={{ marginBottom: '20px', fontSize: '0.9em', color: '#ccc', textAlign: 'center' }}>
                     **Fecha:** **{formattedDate}** | **Total de la Orden:** **{orderTotal}**
                 </p>
 
@@ -267,17 +270,17 @@ const OrderDetailsModal = ({ isOpen, order, onClose }) => {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
-                    <button 
-                        style={{ 
-                            padding: '10px 20px', 
-                            borderRadius: '8px', 
-                            fontWeight: 'bold', 
-                            cursor: 'pointer', 
-                            border: 'none', 
-                            fontSize: '0.9em', 
-                            backgroundColor: '#4f46e5', 
+                    <button
+                        style={{
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            border: 'none',
+                            fontSize: '0.9em',
+                            backgroundColor: '#4f46e5',
                             color: '#ffffff'
-                        }} 
+                        }}
                         onClick={onClose}
                     >
                         Cerrar
@@ -287,6 +290,7 @@ const OrderDetailsModal = ({ isOpen, order, onClose }) => {
         </div>
     );
 };
+
 
 
 // -------------------------------------------------------------
@@ -303,9 +307,9 @@ const SidebarItem = ({ icon: Icon, label, isActive, path, showModal, navigate })
                 'Confirmación de Salida',
                 '¿Estás seguro de que quieres cerrar la sesión actual?',
                 'confirm',
-                () => { 
+                () => {
                     localStorage.removeItem('token');
-                    navigate('/'); 
+                    navigate('/');
                 }
             );
         }
@@ -342,9 +346,9 @@ const StatCard = ({ icon: Icon, title, value, colorClass }) => {
 // -------------------------------------------------------------
 
 function OrdenesPasadas() {
-    const navigate = useNavigate(); 
-    const [orders, setOrders] = useState([]); 
-    
+    const navigate = useNavigate();
+    const [orders, setOrders] = useState([]);
+
     // --- ESTADOS DEL MODAL GENÉRICO ---
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalContent, setModalContent] = useState({
@@ -352,7 +356,7 @@ function OrdenesPasadas() {
         message: '',
         type: 'alert',
         onConfirm: null,
-        showInput: false, 
+        showInput: false,
         inputPlaceholder: ''
     });
 
@@ -365,13 +369,13 @@ function OrdenesPasadas() {
         setModalContent({ title, message, type, onConfirm, showInput, inputPlaceholder });
         setIsModalOpen(true);
     };
-    
+
     // FUNCIÓN DE CIERRE DE MODAL GENÉRICO
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setModalContent({ title: '', message: '', type: 'alert', onConfirm: null, showInput: false, inputPlaceholder: '' });
     };
-    
+
     // FUNCIÓN PARA ABRIR EL MODAL DE DETALLES
     const handleViewDetails = async (orderId) => {
         try {
@@ -380,21 +384,21 @@ function OrdenesPasadas() {
             const response = await axios.get(`http://localhost:3002/api/orders/${orderId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            
+
             // Si la llamada es exitosa y hay datos, abrir el modal
             if (response.data && response.data.message) {
                 // response.data.message debe contener IDOrden, Fecha, Total, y Detalles: []
                 setSelectedOrderDetails(response.data.message);
                 setIsDetailsModalOpen(true);
             } else {
-                 showModal('Error', 'No se pudieron cargar los detalles de la orden.', 'alert');
+                showModal('Error', 'No se pudieron cargar los detalles de la orden.', 'alert');
             }
         } catch (error) {
             console.error("Error fetching order details:", error);
             showModal('Error', 'Hubo un problema al conectar con el servidor para obtener los detalles.', 'alert');
         }
     };
-    
+
     // FUNCIÓN PARA CERRAR EL MODAL DE DETALLES
     const handleCloseDetailsModal = () => {
         setIsDetailsModalOpen(false);
@@ -409,11 +413,11 @@ function OrdenesPasadas() {
                 const response = await axios.get('http://localhost:3002/api/orders', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 if (response.data && response.data.message) {
                     const mappedOrders = response.data.message.map(order => ({
                         // Almacenamos el ID de la orden REAL para la llamada de detalles
-                        IDOrden: order.IDOrden, 
+                        IDOrden: order.IDOrden,
                         id: `#${order.IDOrden.toString().padStart(6, '0')}`,
                         fecha: new Date(order.Fecha).toLocaleDateString(),
                         cliente: 'Cliente General',
@@ -445,7 +449,7 @@ function OrdenesPasadas() {
             <div className="sidebar">
                 <div className="profileSection">
                     <UserAvatar />
-                    <h2 className="accountTitle">ACCOUNT</h2>
+                    <h2 className="accountTitle">{userName}</h2>
                     <p className="loremText">Buen dia</p>
                 </div>
                 <div className="menu">
@@ -508,7 +512,7 @@ function OrdenesPasadas() {
                                             <td>
                                                 <div className="actions">
                                                     {/* Botón que llama a la nueva función de detalles */}
-                                                    <button 
+                                                    <button
                                                         className="actionLink view"
                                                         onClick={() => handleViewDetails(order.IDOrden)} // USAMOS order.IDOrden para la API
                                                     >
@@ -540,10 +544,10 @@ function OrdenesPasadas() {
                 type={modalContent.type}
                 onConfirm={modalContent.onConfirm}
                 onClose={handleCloseModal}
-                showInput={modalContent.showInput} 
+                showInput={modalContent.showInput}
                 inputPlaceholder={modalContent.inputPlaceholder}
             />
-            
+
             {/* -------------------- MODAL DE DETALLES (NUEVO) -------------------- */}
             <OrderDetailsModal
                 isOpen={isDetailsModalOpen}

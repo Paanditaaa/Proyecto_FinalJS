@@ -98,6 +98,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
     };
 
 
+
     return (
         <div style={modalStyle}>
             <div style={contentStyle}>
@@ -144,7 +145,8 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
         </div>
     );
 };
-
+// -- Constante que permite que aparezca el nombre del usuario en el sidebar --
+const userName = localStorage.getItem('userName') || "Invitado";
 
 // --- Componentes Reutilizables (SidebarItem MODIFICADO) ---
 
@@ -152,7 +154,7 @@ const CustomModal = ({ isOpen, title, message, type, onConfirm, onClose, showInp
  * Componente para un elemento del menú lateral con navegación y manejo de modal.
  */
 const SidebarItem = ({ icon: Icon, label, isActive, path, navigate, showModal }) => {
-    
+
     // Función de confirmación de logout (se define aquí para usar navigate)
     const handleLogoutConfirm = () => {
         // Lógica real de CERRAR SESIÓN
@@ -293,7 +295,7 @@ function Dashboard() {
             <div className="sidebar">
                 <div className="profileSection">
                     <UserAvatar />
-                    <h2 className="accountTitle">ACCOUNT</h2>
+                    <h2 className="accountTitle">{userName}</h2>
                     <p className="loremText">Buen dia</p>
                 </div>
                 <div className="menu">
@@ -304,13 +306,13 @@ function Dashboard() {
                     <SidebarItem icon={FaBox} label="Productos" path="/dashboard/productos" navigate={navigate} showModal={showModal} />
                     <SidebarItem icon={FaTruck} label="Proveedores" path="/dashboard/proveedores" navigate={navigate} showModal={showModal} />
                     <SidebarItem icon={FaCog} label="Configuracion" path="/dashboard/configuracion" navigate={navigate} showModal={showModal} />
-                    
+
                     {/* Botón de Cerrar Sesión con lógica de modal */}
-                    <SidebarItem 
-                        icon={BsFillDoorOpenFill} 
-                        label="Cerrar sesion" 
-                        navigate={navigate} 
-                        showModal={showModal} 
+                    <SidebarItem
+                        icon={BsFillDoorOpenFill}
+                        label="Cerrar sesion"
+                        navigate={navigate}
+                        showModal={showModal}
                     />
                 </div>
             </div>
@@ -330,7 +332,7 @@ function Dashboard() {
                     {/* Aquí irían otras StatCards */}
                 </div>
             </div>
-            
+
             {/* -------------------- MODAL GLOBAL AÑADIDO -------------------- */}
             <CustomModal
                 isOpen={isModalOpen}

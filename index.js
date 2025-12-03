@@ -27,6 +27,7 @@ app.get("/", index);
 app.use("/api/user", user);
 app.use("/api/categories", categories);
 app.use("/api/proveedores", require('./routes/proveedores'));
+app.use("/api/feedback", require('./routes/feedback'));
 
 // 🛑 AHORA APLICA LA AUTENTICACIÓN A LAS RUTAS PROTEGIDAS
 app.use(authMiddleware);
