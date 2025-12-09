@@ -14,6 +14,106 @@ router.get("/", async (req, res, next) => {
     }
 });
 
+// GET /api/orders/:id - Obtener detalles de una orden específica con sus productos
+router.get("/:id", async (req, res, next) => {
+    try {
+        const orderId = req.params.id;
+        console.log(`Fetching details for order ID: ${orderId}`);
+
+        // 1. Obtener información básica de la orden
+        const orderQuery = "SELECT IDOrden, Fecha, Total FROM orden WHERE IDOrden = ?";
+        const orderRows = await db.query(orderQuery, [orderId]);
+
+        if (orderRows.length === 0) {
+            return res.status(404).json({
+                code: 404,
+                message: "Orden no encontrada"
+            });
+        }
+
+        const order = orderRows[0];
+
+        // 2. Obtener los productos/platillos de la orden desde la tabla 'pedido'
+        // Asumiendo que existe una tabla 'pedido' con: IDPedido, IDOrden, IDPlatillo, Cantidad, PrecioIndividual
+        const detailsQuery = `
+            SELECT 
+                p.IDPlatillo,
+                p.Nombre AS Producto,
+                ped.Cantidad,
+                ped.PrecioIndividual
+            FROM pedido ped
+            INNER JOIN platillo p ON ped.IDPlatillo = p.IDPlatillo
+            WHERE ped.IDOrden = ?
+            ORDER BY p.Nombre
+        `;
+
+        const detailsRows = await db.query(detailsQuery, [orderId]);
+
+        // 3. Formatear la respuesta
+        const response = {
+            IDOrden: `#${order.IDOrden.toString().padStart(6, '0')}`,
+            Fecha: order.Fecha,
+            Total: order.Total,
+            Detalles: detailsRows.map(row => ({
+                Producto: row.Producto,
+                Cantidad: row.Cantidad,
+                PrecioIndividual: parseFloat(row.PrecioIndividual)
+            }))
+        };
+
+        console.log("Order details retrieved successfully:", response);
+        return res.status(200).json({
+            code: 200,
+            message: response
+        });
+
+    } catch (error) {
+        console.error("Error fetching order details:", error);
+        return res.status(500).json({
+            code: 500,
+            message: "Error al obtener los detalles de la orden",
+            error: error.message
+        });
+    }
+});
+
+// DELETE /api/orders/:id - Eliminar una orden específica
+router.delete("/:id", async (req, res, next) => {
+    try {
+        const orderId = req.params.id;
+        console.log(`Deleting order ID: ${orderId}`);
+
+        // Verificar que la orden existe
+        const checkQuery = "SELECT IDOrden FROM orden WHERE IDOrden = ?";
+        const checkRows = await db.query(checkQuery, [orderId]);
+
+        if (checkRows.length === 0) {
+            return res.status(404).json({
+                code: 404,
+                message: "Orden no encontrada"
+            });
+        }
+
+        // Eliminar la orden (los detalles en 'pedido' se eliminan automáticamente por CASCADE)
+        const deleteQuery = "DELETE FROM orden WHERE IDOrden = ?";
+        await db.query(deleteQuery, [orderId]);
+
+        console.log(`Order ${orderId} deleted successfully`);
+        return res.status(200).json({
+            code: 200,
+            message: "Orden eliminada exitosamente"
+        });
+
+    } catch (error) {
+        console.error("Error deleting order:", error);
+        return res.status(500).json({
+            code: 500,
+            message: "Error al eliminar la orden",
+            error: error.message
+        });
+    }
+});
+
 // POST /api/orders - Procesar una orden, guardar en BD y descontar stock
 router.post("/", async (req, res, next) => {
     try {
@@ -61,6 +161,22 @@ router.post("/", async (req, res, next) => {
         const orderResult = await db.query(insertOrderQuery, [totalOrder]);
         console.log("Order inserted, ID:", orderResult.insertId);
         const newOrderId = orderResult.insertId;
+
+        // 2.5. Insertar los detalles de cada producto en la tabla 'pedido'
+        // Asumiendo que la tabla 'pedido' tiene: IDPedido (AI), IDOrden, IDPlatillo, Cantidad, PrecioIndividual
+        for (const detail of orderDetails) {
+            const insertDetailQuery = `
+                INSERT INTO pedido (IDOrden, IDPlatillo, Cantidad, PrecioIndividual) 
+                VALUES (?, ?, ?, ?)
+            `;
+            await db.query(insertDetailQuery, [
+                newOrderId,
+                detail.IDPlatillo,
+                detail.quantity,
+                detail.Precio
+            ]);
+            console.log(`Inserted order detail for dish ${detail.IDPlatillo}`);
+        }
 
         // 3. Descontar stock de los ingredientes (Lógica original mantenida)
         for (const item of items) {
